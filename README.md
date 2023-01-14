@@ -8,6 +8,9 @@ See https://github.com/bravecollective/mumble-sso for the authentication script 
 
 ## Install
 
+See [Neucore Plugins.md](https://github.com/tkhamez/neucore/blob/main/doc/Plugins.md) for general installation 
+instructions.
+
 - Create the database tables by importing create.sql.
 
 The plugin needs the following environment variables:
