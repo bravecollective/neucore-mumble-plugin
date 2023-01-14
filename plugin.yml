@@ -8,10 +8,10 @@
 name: Mumble auth
 
 # Full class name of class implementing Neucore\Plugin\ServiceInterface.
-phpClass: Brave\Neucore\Plugin\Mumble\Service
+phpClass: Neucore\Plugin\Mumble\Service
 
 # PHP namespace that should be loaded by the PSR-4 autoloader.
-psr4Prefix: Brave\Neucore\Plugin\Mumble
+psr4Prefix: Neucore\Plugin\Mumble
 
 # Relative (to this file) path to the directory containing the classes of the above namespace.
 psr4Path: src
@@ -58,7 +58,7 @@ URLs:
     title: Download Mumble
     target: _blank
   -
-    url: mumble://{username}:{password}@mumble.bravecollective.com:64738/?version=1.3.0&title=Brave Collective Comms
+    url: mumble://{username}:{password}@mumble.your-server.tdl:64738/?version=1.3.0&title=Yours Comms
     title: Connect to Mumble
     target: _self
 
@@ -68,7 +68,7 @@ textTop:
 # Text below account table (supports multiline text).
 textAccount: |
   Manual Configuration
-  Address: mumble.bravecollective.com
+  Address: mumble.your-server.tdl
   Port: 64738
 
 # Text below the registration form/button (supports multiline text).

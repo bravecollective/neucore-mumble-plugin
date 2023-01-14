@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Brave\Neucore\Plugin\Mumble;
+namespace Neucore\Plugin\Mumble;
 
 use Neucore\Plugin\Core\FactoryInterface;
 use Neucore\Plugin\Data\CoreAccount;

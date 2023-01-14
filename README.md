@@ -4,7 +4,7 @@ This package provides a solution for managing access to a Mumble server using Ne
 
 ## Requirements
 
-- A [Neucore](https://github.com/bravecollective/neucore) installation.
+- A [Neucore](https://github.com/tkhamez/neucore) installation.
 - Its own Mysql/MariaDB database.
 - Python 3.8
 - Mumble Server (murmur)
@@ -14,10 +14,11 @@ This package provides a solution for managing access to a Mumble server using Ne
 See [Neucore Plugins.md](https://github.com/tkhamez/neucore/blob/main/doc/Plugins.md) for general installation 
 instructions.
 
-- Create the database tables by importing create.sql.
+- Create a new database (e.g. neucore_mumble)
+- Create database tables by importing create.sql.
 
 The plugin needs the following environment variables:
-- NEUCORE_PLUGIN_MUMBLE_DB_DSN=mysql:dbname=brave-mumble-sso;host=127.0.0.1
+- NEUCORE_PLUGIN_MUMBLE_DB_DSN=mysql:dbname=neucore_mumble;host=127.0.0.1
 - NEUCORE_PLUGIN_MUMBLE_DB_USERNAME=username
 - NEUCORE_PLUGIN_MUMBLE_DB_PASSWORD=password
 - NEUCORE_PLUGIN_MUMBLE_BANNED_GROUP=18 # Optional Neucore group ID, members of this group will not be able to connect.
