@@ -2,12 +2,41 @@
 
 This package provides a solution for managing access to a Mumble server using Neucore groups.
 
+Features:
+- Permissions based on Neucore groups.
+- Display name based on Neucore groups.
+- Bans based on Neucore group.
+
+## How it works
+
+The plugin uses its own database that the Neucore service plugin fills and the Mumble authenticator script 
+will read.
+
+### Permissions
+
+All groups from anyone that creates a Mumble account in Neucore will be added to the Mumble server. They are then 
+available as groups in the ACL configuration.
+
+Accounts that are members of the "banned" group (see NEUCORE_PLUGIN_MUMBLE_BANNED_GROUP) will not be able
+to connect to Mumble.
+
+### Names
+
+The Mumble display name is set to the EVE character name, optionally followed by one or more tags.
+
+Tags are added according to the configuration from the service plugin. Only the first from the list is used, with
+two exceptions:
+
+- CEO: This tag is added additionally.
+- Pronouns: If the assign tag matches a predefined list (He/Him, She/Her, They/Them etc.)
+  it is also added additionally.
+
 ## Requirements
 
 - A [Neucore](https://github.com/tkhamez/neucore) installation.
-- Its own Mysql/MariaDB database.
+- Its own MySQL/MariaDB database.
 - Python 3.8
-- Mumble Server (murmur)
+- Mumble Server
 
 ## Install the plugin
 
@@ -23,16 +52,17 @@ The plugin needs the following environment variables:
 - NEUCORE_PLUGIN_MUMBLE_DB_PASSWORD=password
 - NEUCORE_PLUGIN_MUMBLE_BANNED_GROUP=18 # Optional Neucore group ID, members of this group will not be able to connect.
 
-Create a new service on Neucore for this plugin, add the "groups to tags" configuration to the "Configuration Data"
+Create a new service on Neucore for this plugin, add a groups-to-tags configuration to the "Configuration Data"
 text area, example:
 ```
-alliance.diplo: Diplo
-alliance.mil.fc.full: Full FC
-```
+alliance.leadership: Leadership
+alliance.fleet-commander: FC
 
-Install for development:
-```shell
-composer install
+alliance.ceo: CEO
+
+pronoun.he: He/Him
+pronoun.she: She/Her
+pronoun.they: They/Them
 ```
 
 ## Install Mumble
@@ -59,7 +89,7 @@ Debian/Ubuntu:
 
 ## Install the authenticator
 
-Ubuntu 20.04:
+Ubuntu 20.04 (Python 3.8):
 
 - Setup:
   - `sudo apt install python3-venv python3-dev build-essential libmysqlclient-dev libbz2-dev`
