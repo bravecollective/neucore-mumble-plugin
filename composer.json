@@ -1,0 +1,17 @@
+{
+    "name": "bravecollective/neucore-plugin-mumble",
+    "description": "",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": "^8.0",
+        "ext-mbstring": "*",
+        "ext-pdo": "*",
+        "tkhamez/neucore-plugin": "^0.10.0"
+    },
+    "config": {
+        "platform": {
+            "php": "8.0.0"
+        }
+    }
+}
