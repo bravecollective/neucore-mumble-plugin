@@ -9,27 +9,26 @@ Features:
 
 ## How it works
 
-The plugin uses its own database that the Neucore service plugin fills and the Mumble authenticator script 
-will read.
+The plugin uses its own database, which is populated by the Neucore service plugin and read by the Mumble 
+authenticator script.
 
 ### Permissions
 
-All groups from anyone that creates a Mumble account in Neucore will be added to the Mumble server. They are then 
+All groups of anyone who creates a Mumble account in Neucore are added to the Mumble server. They are then 
 available as groups in the ACL configuration.
 
-Accounts that are members of the "banned" group (see NEUCORE_PLUGIN_MUMBLE_BANNED_GROUP) will not be able
-to connect to Mumble.
+Accounts that are members of the "banned" group (see NEUCORE_PLUGIN_MUMBLE_BANNED_GROUP) cannot connect to Mumble.
 
 ### Names
 
-The Mumble display name is set to the EVE character name, optionally followed by one or more tags.
+The Mumble display name is set to the name of the EVE character, optionally followed by one or more tags.
 
-Tags are added according to the configuration from the service plugin. Only the first from the list is used, with
-two exceptions:
+The tags are added according to the configuration of the service plugin. Only the first one from the list is used, 
+with two exceptions:
 
 - CEO: This tag is added additionally.
-- Pronouns: If the assign tag matches a predefined list (He/Him, She/Her, They/Them etc.)
-  it is also added additionally.
+- Pronouns: If the assigned tag matches a predefined list (He/Her, She/Her, She/She, etc.), it will also be
+  added additionally.
 
 ## Requirements
 
