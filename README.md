@@ -62,13 +62,13 @@ Ubuntu 20.04:
 
 - Setup:
   - `sudo apt install python3-venv python3-dev build-essential libmysqlclient-dev libbz2-dev`
-  - `cd /var/www/mumble-sso/authenticator/`
+  - `cd /opt/neucore-mumble-plugin/authenticator/`
   - `python3 -m venv .venv`
   - `source .venv/bin/activate`
   - `pip install wheel`
   - `pip install zeroc-ice mysqlclient`
   - `deactivate`
-- Edit `authenticator/mumble-sso-auth.ini` (copy from mumble-sso-auth.ini.dist)
+- Edit `authenticator/mumble-authenticator.ini` (copy from mumble-authenticator.ini.dist)
 - Systemd service:
   - Copy the file `authenticator/mumble-authenticator.service` to 
     `/etc/systemd/system/mumble-authenticator.service` and adjust user and paths in it if needed.

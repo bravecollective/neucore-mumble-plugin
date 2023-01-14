@@ -20,7 +20,7 @@ import Murmur
 # -------------------------------------------------------------------------------
 
 
-cfg = 'mumble-sso-auth.ini'
+cfg = 'mumble-authenticator.ini'
 print('Reading config file: {0}'.format(cfg))
 config = configparser.RawConfigParser()
 config.read(cfg)
