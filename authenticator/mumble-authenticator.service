@@ -1,0 +1,14 @@
+[Unit]
+Description = Mumble Authenticator
+After = mumble-server.service
+
+[Service]
+Type = simple
+User = ubuntu
+WorkingDirectory = /var/www/mumble-sso/authenticator
+ExecStart = /var/www/mumble-sso/authenticator/.venv/bin/python -u mumble-sso-auth.py
+Restart = always
+RestartSec = 5s
+
+[Install]
+WantedBy = multi-user.target
