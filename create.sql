@@ -1,31 +1,29 @@
-CREATE TABLE `ticker`
+create table ticker
 (
-    `filter` varchar(45) NOT NULL,
-    `text`   varchar(5)  NOT NULL,
-    PRIMARY KEY (`filter`)
-) DEFAULT CHARSET = UTF8MB4;
+    filter varchar(45) not null primary key,
+    text   varchar(5)  not null
+) engine = InnoDB charset = utf8mb4;
 
-CREATE TABLE `user`
+create table user
 (
-    `character_id`     int         NOT NULL,
-    `character_name`   varchar(45) NOT NULL,
-    `corporation_id`   int         NOT NULL,
-    `corporation_name` varchar(45) NOT NULL,
-    `alliance_id`      int         DEFAULT NULL,
-    `alliance_name`    varchar(45) DEFAULT NULL,
-    `mumble_username`  varchar(45) NOT NULL,
-    `mumble_password`  varchar(45) NOT NULL,
-    `created_at`       int         NOT NULL,
-    `updated_at`       int         NOT NULL,
-    `groups`           longtext,
-    `owner_hash`       varchar(45) NOT NULL,
-    PRIMARY KEY (`character_id`)
-) DEFAULT CHARSET = UTF8MB4;
+    character_id     int          not null primary key,
+    character_name   varchar(255) not null,
+    corporation_id   int          not null,
+    corporation_name varchar(255) not null,
+    alliance_id      int          null,
+    alliance_name    varchar(255) null,
+    mumble_username  varchar(45)  not null,
+    mumble_password  varchar(45)  not null,
+    created_at       int          not null,
+    updated_at       int          not null,
+    `groups`         text         null,
+    owner_hash       varchar(45)  not null,
+    mumble_fullname  varchar(255) not null
+) engine = InnoDB charset = utf8mb4;
 
-CREATE TABLE `ban`
+create table ban
 (
-    `filter`          varchar(45) NOT NULL,
-    `reason_public`   longtext,
-    `reason_internal` longtext,
-    PRIMARY KEY (`filter`)
-) DEFAULT CHARSET = UTF8MB4;
+    filter          varchar(45) not null primary key,
+    reason_public   text        null,
+    reason_internal text        null
+) engine = InnoDB charset = utf8mb4;
