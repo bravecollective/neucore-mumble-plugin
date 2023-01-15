@@ -105,3 +105,14 @@ Ubuntu 20.04 (Python 3.8):
   - `sudo systemctl daemon-reload`
   - `sudo systemctl enable mumble-authenticator`
   - `sudo systemctl start mumble-authenticator`
+
+## Changelog
+
+0.1.0, 2023-01-15
+
+First release, simply a copy/merge of [neucore-plugin-mumble](https://github.com/bravecollective/neucore-plugin-mumble)
+and [mumble-sso](https://github.com/bravecollective/mumble-sso) with minimal adjustments.
+
+- Permissions based on Neucore groups.
+- Display name based on Neucore groups.
+- Bans based on Neucore group.
