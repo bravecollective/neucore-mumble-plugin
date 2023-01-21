@@ -111,6 +111,7 @@ Ubuntu 20.04 (Python 3.8):
 next
 
 - Changed names of the environment variables.
+- Added support for encrypted database connection.
 
 0.1.0, 2023-01-15
 
