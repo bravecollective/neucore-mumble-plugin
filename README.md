@@ -46,10 +46,10 @@ instructions.
 - Create database tables by importing create.sql.
 
 The plugin needs the following environment variables:
-- NEUCORE_PLUGIN_MUMBLE_DB_DSN=mysql:dbname=neucore_mumble;host=127.0.0.1
-- NEUCORE_PLUGIN_MUMBLE_DB_USERNAME=username
-- NEUCORE_PLUGIN_MUMBLE_DB_PASSWORD=password
-- NEUCORE_PLUGIN_MUMBLE_BANNED_GROUP=18 # Optional Neucore group ID, members of this group will not be able to connect.
+- NEUCORE_MUMBLE_PLUGIN_DB_DSN=mysql:dbname=neucore_mumble;host=127.0.0.1
+- NEUCORE_MUMBLE_PLUGIN_DB_USERNAME=username
+- NEUCORE_MUMBLE_PLUGIN_DB_PASSWORD=password
+- NEUCORE_MUMBLE_PLUGIN_BANNED_GROUP=18 # Optional Neucore group ID, members of this group will not be able to connect.
 
 Create a new service on Neucore for this plugin, add a groups-to-tags configuration to the "Configuration Data"
 text area, example:
@@ -107,6 +107,10 @@ Ubuntu 20.04 (Python 3.8):
   - `sudo systemctl start mumble-authenticator`
 
 ## Changelog
+
+next
+
+- Changed names of the environment variables.
 
 0.1.0, 2023-01-15
 

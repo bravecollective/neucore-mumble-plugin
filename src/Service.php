@@ -446,9 +446,9 @@ class Service implements ServiceInterface
         if ($this->pdo === null) {
             try {
                 $this->pdo = new PDO(
-                    $_ENV['NEUCORE_PLUGIN_MUMBLE_DB_DSN'],
-                    $_ENV['NEUCORE_PLUGIN_MUMBLE_DB_USERNAME'],
-                    $_ENV['NEUCORE_PLUGIN_MUMBLE_DB_PASSWORD']
+                    $_ENV['NEUCORE_MUMBLE_PLUGIN_DB_DSN'],
+                    $_ENV['NEUCORE_MUMBLE_PLUGIN_DB_USERNAME'],
+                    $_ENV['NEUCORE_MUMBLE_PLUGIN_DB_PASSWORD']
                 );
             } catch (PDOException $e) {
                 $this->logger->error($e->getMessage() . ' at ' . __FILE__ . ':' . __LINE__);
