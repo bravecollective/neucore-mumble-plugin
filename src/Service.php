@@ -170,85 +170,11 @@ class Service implements ServiceInterface
             return;
         }
 
-        $groupNames = $this->groupNames($groups);
-
-        // add ticker
         $this->addTicker($character);
 
-        // There are some accounts with an empty Mumble username, update it if empty, but do not change it if not.
-        $stmtSelect = $this->pdo->prepare("SELECT mumble_username FROM user WHERE character_id = :id");
-        try {
-            $stmtSelect->execute([':id' => $character->id]);
-        } catch (PDOException $e) {
-            $this->logger->error($e->getMessage(), ['exception' => $e]);
-            throw new Exception();
-        }
-        $userNameResult = $stmtSelect->fetchAll(PDO::FETCH_ASSOC);
-        if (isset($userNameResult[0]) && !empty($userNameResult[0]['mumble_username'])) {
-            $mumbleUsername = $userNameResult[0]['mumble_username'];
-        } else {
-            $mumbleUsername = $this->toMumbleName((string)$character->name);
-            // the username may still be empty here
-        }
-        $updateUserNameSqlPart = empty($mumbleUsername) ? '' : 'mumble_username = :mumble_username,';
+        $this->updateUser($character, $groups);
 
-        // Character name and Mumble full name - $character->name can be null!
-        $mumbleFullName = $this->generateMumbleFullName(
-            (string)$character->name,
-            $groupNames,
-            $character->corporationTicker
-        );
-        $updateFullNameSqlPart = empty($mumbleFullName) ? '' : 'mumble_fullname = :mumble_fullname,';
-        $updateCharNameSqlPart = empty($character->name) ? '' : 'character_name = :character_name,';
-
-        // update user
-        $stmt = $this->pdo->prepare(
-            "UPDATE user
-            SET `groups` = :groups, $updateCharNameSqlPart
-                corporation_id = :corporation_id, corporation_name = :corporation_name,
-                alliance_id = :alliance_id, alliance_name = :alliance_name,
-                $updateUserNameSqlPart $updateFullNameSqlPart
-                updated_at = :updated_at
-            WHERE character_id = :character_id"
-        );
-        $stmt->bindValue(':character_id', $character->id);
-        if (!empty($character->name)) {
-            $stmt->bindValue(':character_name', $character->name);
-        }
-        $stmt->bindValue(':corporation_id', (int)$character->corporationId);
-        $stmt->bindValue(':corporation_name', (string)$character->corporationName);
-        $stmt->bindValue(':alliance_id', $character->allianceId);
-        $stmt->bindValue(':alliance_name', $character->allianceName);
-        $stmt->bindValue(':groups', $groupNames);
-        $stmt->bindValue(':updated_at', time());
-        if (!empty($mumbleUsername)) {
-            $stmt->bindValue(':mumble_username', $mumbleUsername);
-        }
-        if (!empty($mumbleFullName)) {
-            $stmt->bindValue(':mumble_fullname', $mumbleFullName);
-        }
-        try {
-            $stmt->execute();
-        } catch(\Exception $e) {
-            $this->logger->error($e->getMessage(), ['exception' => $e]);
-            throw new Exception();
-        }
-
-        // Add/remove character from ban table
-        $banFilter = "character-$character->id";
-        if (in_array((int)($_ENV['NEUCORE_PLUGIN_MUMBLE_BANNED_GROUP'] ?? 0), $this->groupIds($groups))) {
-            $stmt = $this->pdo->prepare('INSERT IGNORE INTO ban (filter, reason_public) VALUES (:filter, :reason)');
-            $stmt->bindValue(':reason', 'banned');
-        } else {
-            $stmt = $this->pdo->prepare('DELETE FROM ban WHERE filter = :filter');
-        }
-        $stmt->bindValue(':filter', $banFilter);
-        try {
-            $stmt->execute();
-        } catch(\Exception $e) {
-            $this->logger->error($e->getMessage(), ['exception' => $e]);
-            throw new Exception();
-        }
+        $this->updateBan($character, $groups);
     }
 
     public function updatePlayerAccount(CoreCharacter $mainCharacter, array $groups): void
@@ -453,6 +379,110 @@ class Service implements ServiceInterface
         try {
             $stmt->execute([$characterId]);
         } catch (PDOException $e) {
+            $this->logger->error($e->getMessage(), ['exception' => $e]);
+            throw new Exception();
+        }
+    }
+
+    /**
+     * There are some accounts with an empty Mumble username, generate a new name for those, return the existing
+     * name for others.
+     *
+     * @throws Exception
+     */
+    private function getMumbleUsername(CoreCharacter $character): string
+    {
+        $stmtSelect = $this->pdo->prepare("SELECT mumble_username FROM user WHERE character_id = :id");
+        try {
+            $stmtSelect->execute([':id' => $character->id]);
+        } catch (PDOException $e) {
+            $this->logger->error($e->getMessage(), ['exception' => $e]);
+            throw new Exception();
+        }
+        $userNameResult = $stmtSelect->fetchAll(PDO::FETCH_ASSOC);
+
+        if (isset($userNameResult[0]) && !empty($userNameResult[0]['mumble_username'])) {
+            $mumbleUsername = $userNameResult[0]['mumble_username'];
+        } else {
+            $mumbleUsername = $this->toMumbleName((string)$character->name);
+            // the username may still be empty here
+        }
+
+        return $mumbleUsername;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function updateUser(CoreCharacter $character, array $groups): void
+    {
+        $groupNames = $this->groupNames($groups);
+
+        // Get Mumble username
+        $mumbleUsername = $this->getMumbleUsername($character);
+        $updateUserNameSqlPart = empty($mumbleUsername) ? '' : 'mumble_username = :mumble_username,';
+
+        // Character name and Mumble full name - $character->name can be null!
+        $mumbleFullName = $this->generateMumbleFullName(
+            (string)$character->name,
+            $groupNames,
+            $character->corporationTicker
+        );
+        $updateFullNameSqlPart = empty($mumbleFullName) ? '' : 'mumble_fullname = :mumble_fullname,';
+        $updateCharNameSqlPart = empty($character->name) ? '' : 'character_name = :character_name,';
+
+        // Update user
+        $stmt = $this->pdo->prepare(
+            "UPDATE user
+            SET `groups` = :groups, $updateCharNameSqlPart
+                corporation_id = :corporation_id, corporation_name = :corporation_name,
+                alliance_id = :alliance_id, alliance_name = :alliance_name,
+                $updateUserNameSqlPart $updateFullNameSqlPart
+                updated_at = :updated_at
+            WHERE character_id = :character_id"
+        );
+        $stmt->bindValue(':character_id', $character->id);
+        if (!empty($character->name)) {
+            $stmt->bindValue(':character_name', $character->name);
+        }
+        $stmt->bindValue(':corporation_id', (int)$character->corporationId);
+        $stmt->bindValue(':corporation_name', (string)$character->corporationName);
+        $stmt->bindValue(':alliance_id', $character->allianceId);
+        $stmt->bindValue(':alliance_name', $character->allianceName);
+        $stmt->bindValue(':groups', $groupNames);
+        $stmt->bindValue(':updated_at', time());
+        if (!empty($mumbleUsername)) {
+            $stmt->bindValue(':mumble_username', $mumbleUsername);
+        }
+        if (!empty($mumbleFullName)) {
+            $stmt->bindValue(':mumble_fullname', $mumbleFullName);
+        }
+        try {
+            $stmt->execute();
+        } catch(\Exception $e) {
+            $this->logger->error($e->getMessage(), ['exception' => $e]);
+            throw new Exception();
+        }
+    }
+
+    /**
+     * Add/remove character from ban table
+     *
+     * @throws Exception
+     */
+    private function updateBan(CoreCharacter $character, array $groups): void
+    {
+        $banFilter = "character-$character->id";
+        if (in_array((int)($_ENV['NEUCORE_PLUGIN_MUMBLE_BANNED_GROUP'] ?? 0), $this->groupIds($groups))) {
+            $stmt = $this->pdo->prepare('INSERT IGNORE INTO ban (filter, reason_public) VALUES (:filter, :reason)');
+            $stmt->bindValue(':reason', 'banned');
+        } else {
+            $stmt = $this->pdo->prepare('DELETE FROM ban WHERE filter = :filter');
+        }
+        $stmt->bindValue(':filter', $banFilter);
+        try {
+            $stmt->execute();
+        } catch(\Exception $e) {
             $this->logger->error($e->getMessage(), ['exception' => $e]);
             throw new Exception();
         }
