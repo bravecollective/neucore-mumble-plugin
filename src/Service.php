@@ -164,6 +164,12 @@ class Service implements ServiceInterface
     {
         $this->dbConnect();
 
+        // Remove account if character does not exist on Neucore.
+        if ($character->playerId === 0) {
+            $this->deleteAccount($character->id);
+            return;
+        }
+
         $groupNames = $this->groupNames($groups);
 
         // add ticker
@@ -436,6 +442,20 @@ class Service implements ServiceInterface
             }
         }
         return $pass;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function deleteAccount(int $characterId): void
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM user WHERE character_id = ?');
+        try {
+            $stmt->execute([$characterId]);
+        } catch (PDOException $e) {
+            $this->logger->error($e->getMessage(), ['exception' => $e]);
+            throw new Exception();
+        }
     }
 
     /**

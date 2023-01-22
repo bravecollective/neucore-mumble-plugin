@@ -110,6 +110,7 @@ Ubuntu 20.04 (Python 3.8):
 
 next
 
+- Mumble accounts for characters that no longer exist on Neucore are now removed.
 - Changed names of the environment variables.
 - Added support for encrypted database connection.
 
