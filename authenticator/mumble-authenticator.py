@@ -79,7 +79,7 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
             c.close()
 
             if not row:
-                print("Fail: {0} not found in database".format(name))
+                print("Fail: {0} not found in the database or not up to date.".format(name))
                 return -1, None, None
 
             character_id = row['character_id']
