@@ -1,6 +1,6 @@
 # Changelog
 
-## next
+## 0.3.0, 2023-01-28
 
 - Breaking: Changed configuration data to YAML.
 - Breaking: Moved NEUCORE_MUMBLE_PLUGIN_BANNED_GROUP environment variable to the configuration data.
