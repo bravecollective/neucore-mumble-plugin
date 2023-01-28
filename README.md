@@ -10,7 +10,7 @@ Features:
 ## How it works
 
 The plugin uses its own database, which is populated by the Neucore service plugin and read by the Mumble 
-authenticator script.
+authenticator.
 
 ### Permissions
 
@@ -46,9 +46,9 @@ instructions.
 - Create database tables by importing create.sql.
 
 The plugin needs the following environment variables:
-- NEUCORE_MUMBLE_PLUGIN_DB_DSN=mysql:dbname=neucore_mumble;host=127.0.0.1
-- NEUCORE_MUMBLE_PLUGIN_DB_USERNAME=username
-- NEUCORE_MUMBLE_PLUGIN_DB_PASSWORD=password
+- NEUCORE_MUMBLE_PLUGIN_DB_DSN=mysql:host=127.0.0.1;dbname=neucore_mumble;user=mumble;password=pass
+- NEUCORE_MUMBLE_PLUGIN_DB_USERNAME=username # Only required if DSN does not include user
+- NEUCORE_MUMBLE_PLUGIN_DB_PASSWORD=password # Only required if DSN does not include password
 - NEUCORE_MUMBLE_PLUGIN_BANNED_GROUP=18 # Optional Neucore group ID, members of this group will not be able to connect.
 
 Create a new service on Neucore for this plugin, add a groups-to-tags configuration to the "Configuration Data"

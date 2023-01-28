@@ -1,9 +1,14 @@
 # Changelog
 
+## next
+
+- NEUCORE_MUMBLE_PLUGIN_DB_USERNAME and NEUCORE_MUMBLE_PLUGIN_DB_PASSWORD are now optional: user and password
+  can be added to NEUCORE_MUMBLE_PLUGIN_DB_DSN.
+
 ## 0.2.0, 2023-01-22
 
 - Breaking: Changed names of the environment variables.
-- Mumble accounts from characters that no longer exist on Neucore are now removed.
+- Fix: Mumble accounts from characters that no longer exist on Neucore are now removed.
 - Added support for encrypted database connection.
 
 ## 0.1.0, 2023-01-15
