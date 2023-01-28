@@ -25,15 +25,10 @@ print('Reading config file: {0}'.format(cfg))
 config = configparser.RawConfigParser()
 config.read(cfg)
 
-server_id = config.getint('murmur', 'server_id')
-
 sql_name = config.get('mysql', 'sql_name')
 sql_user = config.get('mysql', 'sql_user')
 sql_pass = config.get('mysql', 'sql_pass')
 sql_host = config.get('mysql', 'sql_host')
-
-display_name = config.get('misc', 'display_name')
-restrict_access_by_ticker = config.get('misc', 'restrict_access_by_ticker')
 
 
 # -------------------------------------------------------------------------------
