@@ -22,15 +22,19 @@ to Mumble.
 
 ### Names
 
-The Mumble display name is set to the name of the EVE character, optionally followed by one or more tags.
+The Mumble display name is set to the string from the "Nickname" configuration. Where are the following placeholders: 
+{allianceTicker}, {corporationTicker}, {characterName} (required) and {tags}. Characters that come directly before 
+or after a placeholder are removed if there is no value for the placeholder. If there are characters that come 
+directly before or after the {tags} placeholder, they are used around every tag.
 
-The tags are added according to the configuration of the service plugin. Only the first tag from each group is used.
+The tags are added according to the "GroupsToTags" configuration of the service plugin. Only the first tag from 
+each group is used. Every tag not included in the optional "AdditionalTagGroups" configuration is part of the main 
+tag group, they are added as the last tag. The optional "AdditionalTagGroups" configuration defines 
+additional groups, they are added in the order they are defined there before the main tag. See plugin.yml for 
+an example.
 
-The "groupsToTags" configuration is one group, the main tag, it is always added last. The optional 
-"additionalTagGroups" configuration defines additional groups, they are added after the character name in the 
-order they are defined there. See plugin.yml for an example.
-
-If there is no main tag for a character, the corporation ticker is used instead.
+The main tag can optionally be used instead of the corporation ticker at its position, configured by the 
+"MainTagReplacesCorporationTicker" configuration value.
 
 ## Requirements
 

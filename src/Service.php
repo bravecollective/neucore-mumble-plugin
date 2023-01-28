@@ -22,6 +22,8 @@ use Symfony\Component\Yaml\Exception\ParseException;
 /** @noinspection PhpUnused */
 class Service implements ServiceInterface
 {
+    private const PLACEHOLDER_CHAR_NAME = '{characterName}';
+
     private LoggerInterface $logger;
 
     private FactoryInterface $factory;
@@ -152,7 +154,7 @@ class Service implements ServiceInterface
         $stmt->bindValue(':owner_hash', (string)$character->ownerHash);
         $stmt->bindValue(
             ':mumble_fullname',
-            $this->generateMumbleFullName($character->name, $groupNames, $character->corporationTicker)
+            $this->generateMumbleFullName($character, $groupNames)
         );
         try {
             $stmt->execute();
@@ -331,53 +333,88 @@ class Service implements ServiceInterface
     /**
      * @throws Exception
      */
-    private function generateMumbleFullName(
-        string $characterName,
-        string $groups,
-        string $corporationTicker = null
-    ): string {
-        $groupsArray = explode(',', $groups);
+    private function generateMumbleFullName(CoreCharacter $character, string $groups): string
+    {
         $config = $this->readConfig();
 
+        $tagsPlaceholder = '{tags}';
+        $corpPlaceholder = '{corporationTicker}';
+        $alliPlaceholder = '{allianceTicker}';
+
+        // read enclosure
+        list($tagPrefix, $tagSuffix) = $this->findEnclosure($config->nickname, $tagsPlaceholder);
+        list($corpPrefix, $corpSuffix) = $this->findEnclosure($config->nickname, $corpPlaceholder);
+        list($alliPrefix, $alliSuffix) = $this->findEnclosure($config->nickname, $alliPlaceholder);
+
+        // Find tags
+
+        $assignedAdditionalTags = [];
         $allAdditionalTags = [];
-        $assignedTags = [];
         foreach ($config->additionalTagGroups as $additionalTagGroup) {
-            $assignedTags[] = null;
+            $assignedAdditionalTags[] = null;
             foreach ($additionalTagGroup as $additionalTag) {
                 $allAdditionalTags[] = $additionalTag;
             }
         }
-        $assignedTags[] = null;
-        $mainTagPosition = count($assignedTags) - 1;
 
+        $groupsArray = explode(',', $groups);
+        $mainTag = null;
         foreach ($config->groupsToTags as $group => $assignedTag) {
             if (!in_array($group, $groupsArray)) {
                 continue;
             }
-
             if (in_array($assignedTag, $allAdditionalTags)) {
                 // Assign additional tags
                 foreach ($config->additionalTagGroups as $position => $additionalTagGroup) {
                     foreach ($additionalTagGroup as $additionalTag) {
-                        if ($assignedTag === $additionalTag && $assignedTags[$position] === null) {
-                            $assignedTags[$position] = "($assignedTag)";
+                        if ($assignedTag === $additionalTag && $assignedAdditionalTags[$position] === null) {
+                            $assignedAdditionalTags[$position] = "$tagPrefix$assignedTag$tagSuffix";
                         }
                     }
                 }
-            } elseif ($assignedTags[$mainTagPosition] === null) {
-                // Assign tag
-                $assignedTags[$mainTagPosition] = "($assignedTag)";
+            } elseif ($mainTag === null) {
+                // Assign main tag
+                $mainTag = (string)$assignedTag;
             }
         }
 
-        // Add corporation ticker if there is no main tag
-        if ($assignedTags[$mainTagPosition] === null) {
-            $assignedTags[$mainTagPosition] = $corporationTicker ? "[$corporationTicker]" : '';
+        $finalAdditionalTags = array_filter($assignedAdditionalTags, function ($tag) { return $tag !== null; });
+
+        // Build nickname
+        $displayName = str_replace(
+            [
+                self::PLACEHOLDER_CHAR_NAME,
+                "$tagPrefix$tagsPlaceholder$tagSuffix",
+                "$corpPrefix$corpPlaceholder$corpSuffix",
+                "$alliPrefix$alliPlaceholder$alliSuffix",
+            ],
+            [
+                $character->name,
+                implode(' ', $finalAdditionalTags) .
+                    ($config->mainTagReplacesCorporationTicker || !$mainTag ? '' : " $tagPrefix$mainTag$tagSuffix"),
+                $config->mainTagReplacesCorporationTicker && $mainTag ?
+                    $tagPrefix . $mainTag . $tagSuffix :
+                    $corpPrefix . $character->corporationTicker . $corpSuffix,
+                $character->allianceTicker ? $alliPrefix . $character->allianceTicker . $alliSuffix : '',
+            ],
+            $config->nickname
+        );
+
+        return trim(preg_replace('/\s+/', ' ', $displayName));
+    }
+
+    private function findEnclosure(string $template, string $placeholder): array
+    {
+        $position = strpos($template, $placeholder);
+
+        $prefix = '';
+        if ($position > 0) {
+            $prefix = trim(substr($template, $position - 1, 1));
         }
 
-        $finalTags = array_filter($assignedTags, function ($tag) { return $tag !== null; });
+        $suffix = trim(substr($template, $position + strlen($placeholder), 1));
 
-        return "$characterName " . implode(' ', $finalTags);
+        return [$prefix, $suffix];
     }
 
     private function randomString(): string
@@ -448,11 +485,7 @@ class Service implements ServiceInterface
         $updateUserNameSqlPart = empty($mumbleUsername) ? '' : 'mumble_username = :mumble_username,';
 
         // Character name and Mumble full name - $character->name can be null!
-        $mumbleFullName = $this->generateMumbleFullName(
-            (string)$character->name,
-            $groupNames,
-            $character->corporationTicker
-        );
+        $mumbleFullName = $this->generateMumbleFullName($character, $groupNames);
         $updateFullNameSqlPart = empty($mumbleFullName) ? '' : 'mumble_fullname = :mumble_fullname,';
         $updateCharNameSqlPart = empty($character->name) ? '' : 'character_name = :character_name,';
 
@@ -557,14 +590,21 @@ class Service implements ServiceInterface
             throw new Exception('Failed to parse plugin configuration.');
         }
 
-        if (!is_array($yaml['groupsToTags'] ?? null)) {
-            throw new Exception('Failed to parse plugin configuration.');
+        if (
+            empty($yaml['Nickname']) ||
+            !str_contains($yaml['Nickname'], self::PLACEHOLDER_CHAR_NAME) ||
+            !is_array($yaml['GroupsToTags'] ?? null) ||
+            !isset($yaml['MainTagReplacesCorporationTicker'])
+        ) {
+            throw new Exception('Incomplete configuration.');
         }
 
         $this->configurationData = new ConfigurationData(
-            $yaml['groupsToTags'],
-            $yaml['bannedGroup'] ? (int)$yaml['bannedGroup'] : null,
-            $yaml['additionalTagGroups'] ?: [],
+            $yaml['Nickname'],
+            $yaml['GroupsToTags'],
+            (bool)$yaml['MainTagReplacesCorporationTicker'],
+            $yaml['AdditionalTagGroups'] ?? [],
+            isset($yaml['BannedGroup']) ? (int)$yaml['BannedGroup'] : null,
         );
 
         return $this->configurationData;
