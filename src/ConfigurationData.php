@@ -7,6 +7,8 @@ namespace Neucore\Plugin\Mumble;
 class ConfigurationData
 {
     public function __construct(
+        public string $databaseEnvVar,
+
         public string $nickname,
 
         public array $groupsToTags,

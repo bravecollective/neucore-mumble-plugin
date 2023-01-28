@@ -45,6 +45,7 @@ actions:
 
 # Additional configuration for the plugin (supports multiline text).
 configurationData: |
+  DatabaseEnvVar: # Optional, defaults to NEUCORE_MUMBLE_PLUGIN_DB_DSN
   Nickname: '{corporationTicker} - {characterName} [{allianceTicker}] ({tags})'
   GroupsToTags:
     alliance.leadership: Leadership

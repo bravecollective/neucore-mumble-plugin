@@ -1,5 +1,11 @@
 # Changelog
 
+## next
+
+- Breaking: Removed NEUCORE_MUMBLE_PLUGIN_DB_USERNAME and NEUCORE_MUMBLE_PLUGIN_DB_PASSWORD environment variables.
+  Add user and password to NEUCORE_MUMBLE_PLUGIN_DB_DSN.
+- Support for multiple Mumble servers (one per service plugin).
+
 ## 0.3.0, 2023-01-28
 
 - Breaking: Changed configuration data to YAML.
@@ -25,5 +31,5 @@ First release, simply a copy/merge of [neucore-plugin-mumble](https://github.com
 and [mumble-sso](https://github.com/bravecollective/mumble-sso) with minimal adjustments.
 
 - Permissions based on Neucore groups.
-- Display name based on character name, corporation and Neucore groups (tags).
+- Nickname based on character name, corporation and Neucore groups (tags).
 - Bans based on Neucore group.

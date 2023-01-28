@@ -560,12 +560,7 @@ class Service implements ServiceInterface
                 $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = $_ENV['NEUCORE_MUMBLE_PLUGIN_DB_SSL_VERIFY'] === '1';
             }
             try {
-                $this->pdo = new PDO(
-                    $_ENV['NEUCORE_MUMBLE_PLUGIN_DB_DSN'],
-                    $_ENV['NEUCORE_MUMBLE_PLUGIN_DB_USERNAME'] ?? null,
-                    $_ENV['NEUCORE_MUMBLE_PLUGIN_DB_PASSWORD'] ?? null,
-                    $options,
-                );
+                $this->pdo = new PDO($_ENV[$this->readConfig()->databaseEnvVar] ?? '', null, null, $options);
             } catch (PDOException $e) {
                 $this->logger->error($e->getMessage() . ' at ' . __FILE__ . ':' . __LINE__);
                 throw new Exception();
@@ -600,6 +595,7 @@ class Service implements ServiceInterface
         }
 
         $this->configurationData = new ConfigurationData(
+            $yaml['DatabaseEnvVar'] ?? 'NEUCORE_MUMBLE_PLUGIN_DB_DSN',
             $yaml['Nickname'],
             $yaml['GroupsToTags'],
             (bool)$yaml['MainTagReplacesCorporationTicker'],

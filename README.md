@@ -4,8 +4,9 @@ This package provides a solution for managing access to a Mumble server using Ne
 
 Features:
 - Permissions based on Neucore groups.
-- Display name based on character name, corporation and Neucore groups (tags).
-- Bans based on Neucore group.
+- Configurable nickname based on character data and Neucore groups (tags).
+- Bans based on Neucore groups.
+- Support for multiple Mumble servers.
 
 ## How it works
 
@@ -49,14 +50,20 @@ See [Neucore Plugins.md](https://github.com/tkhamez/neucore/blob/main/doc/Plugin
 instructions.
 
 - Create a new database (e.g. neucore_mumble)
-- Create database tables by importing create.sql.
+- Create the database tables by importing create.sql.
 
-The plugin needs the following environment variables:
-- NEUCORE_MUMBLE_PLUGIN_DB_DSN=mysql:host=127.0.0.1;dbname=neucore_mumble;user=mumble;password=pass
-- NEUCORE_MUMBLE_PLUGIN_DB_USERNAME=username # Only required if DSN does not include user
-- NEUCORE_MUMBLE_PLUGIN_DB_PASSWORD=password # Only required if DSN does not include password
+The plugin needs the following environment variable:
+- `NEUCORE_MUMBLE_PLUGIN_DB_DSN=mysql:host=127.0.0.1;dbname=neucore_mumble;user=mumble;password=pass`  
+  The name of the environment variable can be changed with "DatabaseEnvVar" from the configuration
+  data of the plugin.
 
-Create a new service on Neucore for this plugin and adjust the "Configuration Data" text area.
+Optional environment variables:
+- `NEUCORE_MUMBLE_PLUGIN_DB_SSL_CA="/path/to/ca-cert.pem"`  
+  Setting this will enable encryption for the database connection.
+- `NEUCORE_MUMBLE_PLUGIN_DB_SSL_VERIFY=1`
+
+Create a new service on Neucore for this plugin and adjust the "Configuration Data" text area and other
+configuration values that you want to change.
 
 ## Install Mumble
 
