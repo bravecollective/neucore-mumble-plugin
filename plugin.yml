@@ -53,6 +53,17 @@ configurationData: |
     pronoun.she: She/Her
     pronoun.they: They/Them
   bannedGroup: 18 # Optional Neucore group ID, members of this group will not be able to connect.
+  additionalTagGroups:
+    -
+      - He/Him
+      - She/He
+      - She/Her
+      - They/Them
+      - He/They
+      - She/They
+      - Any Pronouns
+    -
+      - CEO
 
 ###
 ### Optional configuration for service plugins

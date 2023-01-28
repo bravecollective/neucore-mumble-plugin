@@ -337,29 +337,47 @@ class Service implements ServiceInterface
         string $corporationTicker = null
     ): string {
         $groupsArray = explode(',', $groups);
-        $pronouns = ['He/Him', 'She/He', 'She/Her', 'They/Them', 'He/They', 'She/They', 'Any Pronouns'];
+        $config = $this->readConfig();
 
-        $pronoun = '';
-        $ceo = '';
-        $appendix = $corporationTicker ? " [$corporationTicker]" : '';
-        $foundAppendix = false;
-        foreach ($this->readConfig()->groupsToTags as $group => $assignedTag) {
+        $allAdditionalTags = [];
+        $assignedTags = [];
+        foreach ($config->additionalTagGroups as $additionalTagGroup) {
+            $assignedTags[] = null;
+            foreach ($additionalTagGroup as $additionalTag) {
+                $allAdditionalTags[] = $additionalTag;
+            }
+        }
+        $assignedTags[] = null;
+        $mainTagPosition = count($assignedTags) - 1;
+
+        foreach ($config->groupsToTags as $group => $assignedTag) {
             if (!in_array($group, $groupsArray)) {
                 continue;
             }
-            if ($assignedTag === 'CEO') {
-                $ceo = " (CEO)";
-            }
-            if (in_array($assignedTag, $pronouns)) {
-                $pronoun = " ($assignedTag)";
-            }
-            if (!$foundAppendix && $assignedTag !== 'CEO' && !in_array($assignedTag, $pronouns)) {
-                $appendix = " ($assignedTag)";
-                $foundAppendix = true; // first one wins
+
+            if (in_array($assignedTag, $allAdditionalTags)) {
+                // Assign additional tags
+                foreach ($config->additionalTagGroups as $position => $additionalTagGroup) {
+                    foreach ($additionalTagGroup as $additionalTag) {
+                        if ($assignedTag === $additionalTag && $assignedTags[$position] === null) {
+                            $assignedTags[$position] = "($assignedTag)";
+                        }
+                    }
+                }
+            } elseif ($assignedTags[$mainTagPosition] === null) {
+                // Assign tag
+                $assignedTags[$mainTagPosition] = "($assignedTag)";
             }
         }
 
-        return $characterName . $pronoun . $ceo . $appendix;
+        // Add corporation ticker if there is no main tag
+        if ($assignedTags[$mainTagPosition] === null) {
+            $assignedTags[$mainTagPosition] = $corporationTicker ? "[$corporationTicker]" : '';
+        }
+
+        $finalTags = array_filter($assignedTags, function ($tag) { return $tag !== null; });
+
+        return "$characterName " . implode(' ', $finalTags);
     }
 
     private function randomString(): string
@@ -546,6 +564,7 @@ class Service implements ServiceInterface
         $this->configurationData = new ConfigurationData(
             $yaml['groupsToTags'],
             $yaml['bannedGroup'] ? (int)$yaml['bannedGroup'] : null,
+            $yaml['additionalTagGroups'] ?: [],
         );
 
         return $this->configurationData;

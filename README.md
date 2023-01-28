@@ -4,7 +4,7 @@ This package provides a solution for managing access to a Mumble server using Ne
 
 Features:
 - Permissions based on Neucore groups.
-- Display name based on Neucore groups.
+- Display name based on character name, corporation and Neucore groups (tags).
 - Bans based on Neucore group.
 
 ## How it works
@@ -24,12 +24,13 @@ to Mumble.
 
 The Mumble display name is set to the name of the EVE character, optionally followed by one or more tags.
 
-The tags are added according to the configuration of the service plugin. Only the first one from the list is used, 
-with two exceptions:
+The tags are added according to the configuration of the service plugin. Only the first tag from each group is used.
 
-- CEO: This tag is added additionally.
-- Pronouns: If the assigned tag matches a predefined list (He/Her, She/Her, She/She, etc.), it will also be
-  added additionally.
+The "groupsToTags" configuration is one group, the main tag, it is always added last. The optional 
+"additionalTagGroups" configuration defines additional groups, they are added after the character name in the 
+order they are defined there. See plugin.yml for an example.
+
+If there is no main tag for a character, the corporation ticker is used instead.
 
 ## Requirements
 
