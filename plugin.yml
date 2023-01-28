@@ -44,8 +44,14 @@ actions:
 ###
 
 # Additional configuration for the plugin (supports multiline text).
-configurationData:
-
+configurationData: |
+  groupsToTags:
+    alliance.leadership: Leadership
+    alliance.fleet-commander: FC
+    alliance.ceo: CEO
+    pronoun.he: He/Him
+    pronoun.she: She/Her
+    pronoun.they: They/Them
 
 ###
 ### Optional configuration for service plugins

@@ -17,17 +17,20 @@ use PDOException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Yaml\Exception\ParseException;
 
 /** @noinspection PhpUnused */
 class Service implements ServiceInterface
 {
     private LoggerInterface $logger;
 
-    private string $configurationData;
+    private FactoryInterface $factory;
+
+    private string $configurationDataRaw;
+
+    private ?ConfigurationData $configurationData = null;
 
     private ?PDO $pdo = null;
-
-    private ?array $groupsToTags = null;
 
     public function __construct(
         LoggerInterface $logger,
@@ -35,7 +38,8 @@ class Service implements ServiceInterface
         FactoryInterface $factory,
     ) {
         $this->logger = $logger;
-        $this->configurationData = $pluginConfiguration->configurationData;
+        $this->configurationDataRaw = $pluginConfiguration->configurationData;
+        $this->factory = $factory;
     }
 
     public function onConfigurationChange(): void
@@ -324,6 +328,9 @@ class Service implements ServiceInterface
         return $nameToCheck;
     }
 
+    /**
+     * @throws Exception
+     */
     private function generateMumbleFullName(
         string $characterName,
         string $groups,
@@ -336,7 +343,7 @@ class Service implements ServiceInterface
         $ceo = '';
         $appendix = $corporationTicker ? " [$corporationTicker]" : '';
         $foundAppendix = false;
-        foreach ($this->groupsToTags() as $group => $assignedTag) {
+        foreach ($this->readConfig()->groupsToTags as $group => $assignedTag) {
             if (!in_array($group, $groupsArray)) {
                 continue;
             }
@@ -516,25 +523,30 @@ class Service implements ServiceInterface
         }
     }
 
-    private function groupsToTags(): array
+    /**
+     * @throws Exception
+     */
+    private function readConfig(): ConfigurationData
     {
-        if (is_array($this->groupsToTags)) {
-            return $this->groupsToTags;
+        if ($this->configurationData) {
+            return $this->configurationData;
         }
 
-        $this->groupsToTags = [];
-        foreach (explode("\n", $this->configurationData) as $line) {
-            $separatorPos = strpos($line, ':');
-            if ($separatorPos === false) {
-                continue;
-            }
-            $group = trim(substr($line, 0, $separatorPos));
-            $title = trim(substr($line, $separatorPos + 1));
-            if (!empty($group) && !empty($title)) {
-                $this->groupsToTags[$group] = $title;
-            }
+        try {
+            $yaml = $this->factory->createSymfonyYamlParser()->parse($this->configurationDataRaw);
+        } catch (ParseException $e) {
+            $this->logger->error($e->getMessage());
+            throw new Exception('Failed to parse plugin configuration.');
         }
 
-        return $this->groupsToTags;
+        if (!is_array($yaml['groupsToTags'] ?? null)) {
+            throw new Exception('Failed to parse plugin configuration.');
+        }
+
+        $this->configurationData = new ConfigurationData(
+            $yaml['groupsToTags'],
+        );
+
+        return $this->configurationData;
     }
 }

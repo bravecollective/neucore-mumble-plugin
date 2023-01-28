@@ -2,6 +2,7 @@
 
 ## next
 
+- Breaking: Changed configuration data to YAML.
 - NEUCORE_MUMBLE_PLUGIN_DB_USERNAME and NEUCORE_MUMBLE_PLUGIN_DB_PASSWORD are now optional: user and password
   can be added to NEUCORE_MUMBLE_PLUGIN_DB_DSN.
 - Removed unused config values from mumble-authenticator.ini.

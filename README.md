@@ -51,18 +51,7 @@ The plugin needs the following environment variables:
 - NEUCORE_MUMBLE_PLUGIN_DB_PASSWORD=password # Only required if DSN does not include password
 - NEUCORE_MUMBLE_PLUGIN_BANNED_GROUP=18 # Optional Neucore group ID, members of this group will not be able to connect.
 
-Create a new service on Neucore for this plugin, add a groups-to-tags configuration to the "Configuration Data"
-text area, example:
-```
-alliance.leadership: Leadership
-alliance.fleet-commander: FC
-
-alliance.ceo: CEO
-
-pronoun.he: He/Him
-pronoun.she: She/Her
-pronoun.they: They/Them
-```
+Create a new service on Neucore for this plugin and adjust the "Configuration Data" text area.
 
 ## Install Mumble
 
