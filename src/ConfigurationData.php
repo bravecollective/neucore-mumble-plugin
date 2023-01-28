@@ -7,6 +7,7 @@ class ConfigurationData
 {
     public function __construct(
         public array $groupsToTags,
+        public ?int $bannedGroup,
     ) {
     }
 }

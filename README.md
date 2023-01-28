@@ -17,7 +17,8 @@ authenticator.
 All groups of anyone who creates a Mumble account in Neucore are added to the Mumble server. They are then 
 available as groups in the ACL configuration.
 
-Accounts that are members of the "banned" group (see NEUCORE_PLUGIN_MUMBLE_BANNED_GROUP) cannot connect to Mumble.
+Accounts that are members of the "banned" group (configurable ID from the plugin configuration data) cannot connect 
+to Mumble.
 
 ### Names
 
@@ -49,7 +50,6 @@ The plugin needs the following environment variables:
 - NEUCORE_MUMBLE_PLUGIN_DB_DSN=mysql:host=127.0.0.1;dbname=neucore_mumble;user=mumble;password=pass
 - NEUCORE_MUMBLE_PLUGIN_DB_USERNAME=username # Only required if DSN does not include user
 - NEUCORE_MUMBLE_PLUGIN_DB_PASSWORD=password # Only required if DSN does not include password
-- NEUCORE_MUMBLE_PLUGIN_BANNED_GROUP=18 # Optional Neucore group ID, members of this group will not be able to connect.
 
 Create a new service on Neucore for this plugin and adjust the "Configuration Data" text area.
 

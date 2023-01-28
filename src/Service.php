@@ -480,7 +480,7 @@ class Service implements ServiceInterface
     private function updateBan(CoreCharacter $character, array $groups): void
     {
         $banFilter = "character-$character->id";
-        if (in_array((int)($_ENV['NEUCORE_PLUGIN_MUMBLE_BANNED_GROUP'] ?? 0), $this->groupIds($groups))) {
+        if (in_array($this->readConfig()->bannedGroup, $this->groupIds($groups))) {
             $stmt = $this->pdo->prepare('INSERT IGNORE INTO ban (filter, reason_public) VALUES (:filter, :reason)');
             $stmt->bindValue(':reason', 'banned');
         } else {
@@ -545,6 +545,7 @@ class Service implements ServiceInterface
 
         $this->configurationData = new ConfigurationData(
             $yaml['groupsToTags'],
+            $yaml['bannedGroup'] ? (int)$yaml['bannedGroup'] : null,
         );
 
         return $this->configurationData;
