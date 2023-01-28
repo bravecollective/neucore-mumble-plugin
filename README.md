@@ -1,6 +1,7 @@
 # Neucore Mumble plugin
 
-This package provides a solution for managing access to a Mumble server using Neucore groups.
+This package provides a solution for managing access to a Mumble server using
+[Neucore](https://github.com/tkhamez/neucore) groups.
 
 Features:
 - Permissions based on Neucore groups.
