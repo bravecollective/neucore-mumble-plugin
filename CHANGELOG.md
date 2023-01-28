@@ -1,6 +1,6 @@
 # Changelog
 
-## next
+## 0.4.0, 2023-01-28
 
 - Breaking: Removed NEUCORE_MUMBLE_PLUGIN_DB_USERNAME and NEUCORE_MUMBLE_PLUGIN_DB_PASSWORD environment variables.
   Add user and password to NEUCORE_MUMBLE_PLUGIN_DB_DSN.
