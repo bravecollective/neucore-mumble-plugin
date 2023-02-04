@@ -6,7 +6,7 @@ After = mumble-server.service
 Type = simple
 User = ubuntu
 WorkingDirectory = /opt/neucore-mumble-plugin/authenticator
-ExecStart = /opt/neucore-mumble-plugin/authenticator/.venv/bin/python -u mumble-authenticator.py
+ExecStart = /opt/neucore-mumble-plugin/authenticator/.venv/bin/python mumble-authenticator.py %i
 Restart = always
 RestartSec = 5s
 

@@ -10,6 +10,14 @@ import MySQLdb
 
 # Read config
 cfg = 'mumble-authenticator.ini'
+config_num = 0
+if len(sys.argv) > 1:
+    try:
+        config_num = int(sys.argv[1])
+    except ValueError:
+        pass
+if config_num > 0:
+    cfg = 'mumble-authenticator-{0}.ini'.format(config_num)
 print('Reading config file: {0}'.format(cfg))
 config = configparser.RawConfigParser()
 config.read(cfg)

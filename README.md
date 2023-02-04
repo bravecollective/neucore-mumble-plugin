@@ -105,10 +105,11 @@ Example for Ubuntu 20.04 (Python 3.8):
   - `pip install wheel`
   - `pip install zeroc-ice mysqlclient`
   - `deactivate`
-- Edit `authenticator/mumble-authenticator.ini` (copy from mumble-authenticator.ini.dist)
+- Create and edit `authenticator/mumble-authenticator-1.ini` (copy from mumble-authenticator.ini.dist). The number
+  in the  filename corresponds to the number from the systemd service parameter below (@1).
 - Systemd service:
-  - Copy the file `authenticator/mumble-authenticator.service` to 
-    `/etc/systemd/system/mumble-authenticator.service` and adjust user and paths in it if needed.
+  - Copy the file `authenticator/mumble-authenticator@.service` to 
+    `/etc/systemd/system/mumble-authenticator@.service` and adjust user and paths in it if needed.
   - `sudo systemctl daemon-reload`
-  - `sudo systemctl enable mumble-authenticator`
-  - `sudo systemctl start mumble-authenticator`
+  - `sudo systemctl enable mumble-authenticator@1`
+  - `sudo systemctl start mumble-authenticator@1`
