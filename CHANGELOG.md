@@ -6,6 +6,7 @@
 - Breaking: Changed database schema: `ALTER TABLE user ADD account_active TINYINT DEFAULT 1 NULL;`
 - Fix: Accounts are now disabled if the player does not have any group required by the plugin.
 - Fix: Allow SuperUser login.
+- New: Show full name for admins and in the Neucore player modal window.
 
 ## 0.4.0, 2023-01-28
 

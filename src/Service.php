@@ -82,7 +82,7 @@ class Service implements ServiceInterface
 
         $placeholders = implode(',', array_fill(0, count($characterIdsOwnerHashes), '?'));
         $stmt = $this->pdo->prepare(
-            "SELECT character_id, mumble_username, mumble_password, owner_hash, account_active
+            "SELECT character_id, mumble_username, mumble_password, mumble_fullname, owner_hash, account_active
             FROM user
             WHERE character_id IN ($placeholders)"
         );
@@ -109,6 +109,7 @@ class Service implements ServiceInterface
                 $password,
                 null,
                 $row['account_active'] ? ServiceAccountData::STATUS_ACTIVE : ServiceAccountData::STATUS_DEACTIVATED,
+                $row['mumble_fullname'],
             );
         }
 
