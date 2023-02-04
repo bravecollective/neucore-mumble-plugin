@@ -12,3 +12,7 @@ slice = /usr/share/slice/Murmur.ice
 
 [murmur]
 server = 1
+
+[auth]
+; If an account has not been updated for more than this number of days, it will not be able to connect.
+update_days_limit = 7

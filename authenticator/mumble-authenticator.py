@@ -66,7 +66,8 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
 
             # ---- Retrieve User
 
-            ts_min = int(time.time()) - (60 * 60 * 24 * 7)
+            days_limit = config.getint('auth', 'update_days_limit')
+            ts_min = int(time.time()) - (60 * 60 * 24 * days_limit)
             c = db.cursor(MySQLdb.cursors.DictCursor)
             c.execute(
                 "SELECT character_id, corporation_id, alliance_id, mumble_password, `groups`, mumble_fullname "
