@@ -1,6 +1,6 @@
 # Changelog
 
-## next
+## 0.5.0, 2023-02-04
 
 - Breaking: Added new configuration variables to mumble-authenticator.ini.
 - Breaking: Changed database schema: `ALTER TABLE user ADD account_active TINYINT DEFAULT 1 NULL;`
