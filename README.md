@@ -1,7 +1,7 @@
 # Neucore Mumble plugin
 
-This package provides a solution for managing access to a Mumble server using
-[Neucore](https://github.com/tkhamez/neucore) groups.
+This package provides a solution for accessing a Mumble server using [Neucore](https://github.com/tkhamez/neucore) 
+groups for permissions.
 
 Features:
 - Permissions based on Neucore groups.
@@ -72,6 +72,7 @@ Debian/Ubuntu:
 
 - Optional: `sudo add-apt-repository ppa:mumble/release`
 - `sudo apt install mumble-server libqt5sql5-mysql`
+- `sudo dpkg-reconfigure mumble-server` to set the SuperUser password.
 - Edit `/etc/mumble-server.ini`
   ```
   database=mumble
@@ -90,7 +91,7 @@ Debian/Ubuntu:
 
 ## Install the authenticator
 
-Ubuntu 20.04 (Python 3.8):
+Example for Ubuntu 20.04 (Python 3.8):
 
 - Setup:
   - `sudo apt install python3-venv python3-dev build-essential libmysqlclient-dev libbz2-dev`

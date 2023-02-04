@@ -3,6 +3,7 @@
 ## next
 
 - Breaking: Added new configuration variables to mumble-authenticator.ini.
+- Fix: Allow SuperUser login.
 
 ## 0.4.0, 2023-01-28
 

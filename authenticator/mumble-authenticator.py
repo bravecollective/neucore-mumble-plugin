@@ -46,16 +46,23 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
         try:
             db = MySQLdb.connect(sql_host, sql_user, sql_pass, sql_name)
 
+            return_fall_through = -2
+            return_denied = -1
+
             # ---- Verify Params
 
             if not name or len(name) == 0:
-                return -1, None, None
+                return return_denied, None, None
+
+            if name == 'SuperUser':
+                print('Fall through for SuperUser')
+                return return_fall_through, None, None
 
             print("Info: Trying '{0}'".format(name))
 
             if not pw or len(pw) == 0:
                 print("Fail: {0} did not send a password".format(name))
-                return -1, None, None
+                return return_denied, None, None
 
             # ---- Retrieve User
 
@@ -71,7 +78,7 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
 
             if not row:
                 print("Fail: {0} not found in the database or not up to date.".format(name))
-                return -1, None, None
+                return return_denied, None, None
 
             character_id = row['character_id']
             corporation_id = row['corporation_id']
@@ -95,7 +102,7 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
                     "Fail: {0} password does not match for {1}: '{2}' != '{3}'"
                     .format(name, character_id, mumble_password, pw)
                 )
-                return -1, None, None
+                return return_denied, None, None
 
             # ---- Check Bans
 
@@ -111,7 +118,7 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
                     "Fail: {0} alliance banned from server: {1} / {2}"
                     .format(name, row1['reason_public'], row1['reason_internal'])
                 )
-                return -1, None, None
+                return return_denied, None, None
 
             c = db.cursor(MySQLdb.cursors.DictCursor)
             c.execute(
@@ -125,7 +132,7 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
                     "Fail: {0} corporation banned from server: {1} / {2}"
                     .format(name, row2['reason_public'], row2['reason_internal'])
                 )
-                return -1, None, None
+                return return_denied, None, None
 
             c = db.cursor(MySQLdb.cursors.DictCursor)
             c.execute(
@@ -139,7 +146,7 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
                     "Fail: {0} character banned from server: {1} / {2}"
                     .format(name, row3['reason_public'], row3['reason_internal'])
                 )
-                return -1, None, None
+                return return_denied, None, None
 
             # ---- Done
 

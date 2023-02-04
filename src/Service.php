@@ -24,6 +24,8 @@ class Service implements ServiceInterface
 {
     private const PLACEHOLDER_CHAR_NAME = '{characterName}';
 
+    private const MUMBLE_SUPERUSER = 'SuperUser';
+
     private LoggerInterface $logger;
 
     private FactoryInterface $factory;
@@ -311,7 +313,7 @@ class Service implements ServiceInterface
 
         $unique = false;
         $count = 0;
-        while (!$unique && $count < 100) {
+        while (!$unique && $count < 900) {
             $stmt = $this->pdo->prepare('SELECT 1 FROM user WHERE mumble_username = ?');
             try {
                 $stmt->execute([$nameToCheck]);
@@ -319,7 +321,7 @@ class Service implements ServiceInterface
                 $this->logger->error($e->getMessage(), ['exception' => $e]);
                 throw new Exception();
             }
-            if ($stmt->rowCount() === 0) {
+            if ($stmt->rowCount() === 0 && $nameToCheck !== strtolower(self::MUMBLE_SUPERUSER)) {
                 $unique = true;
             } else {
                 $count ++;
@@ -463,7 +465,11 @@ class Service implements ServiceInterface
         }
         $userNameResult = $stmtSelect->fetchAll(PDO::FETCH_ASSOC);
 
-        if (isset($userNameResult[0]) && !empty($userNameResult[0]['mumble_username'])) {
+        if (
+            isset($userNameResult[0]) &&
+            !empty($userNameResult[0]['mumble_username']) &&
+            strtolower($userNameResult[0]['mumble_username']) !== strtolower(self::MUMBLE_SUPERUSER)
+        ) {
             $mumbleUsername = $userNameResult[0]['mumble_username'];
         } else {
             $mumbleUsername = $this->toMumbleName((string)$character->name);
