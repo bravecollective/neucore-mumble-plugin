@@ -4,3 +4,11 @@ sql_host = 127.0.0.1
 sql_user = root
 sql_pass = root
 sql_name = mumble-sso
+
+[ice]
+host = 127.0.0.1
+port = 6502
+slice = /usr/share/slice/Murmur.ice
+
+[murmur]
+server = 1

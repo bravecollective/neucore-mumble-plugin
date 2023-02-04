@@ -7,42 +7,33 @@ import time
 import Ice
 import MySQLdb
 
-try:
-    Ice.loadSlice('', ['-I' + Ice.getSliceDir(), "/usr/share/slice/Murmur.ice"])
-except RuntimeError as e:
-    print(format(e))
-    sys.exit(0)
 
-# noinspection PyUnresolvedReferences
-import Murmur
-
-
-# -------------------------------------------------------------------------------
-
-
+# Read config
 cfg = 'mumble-authenticator.ini'
 print('Reading config file: {0}'.format(cfg))
 config = configparser.RawConfigParser()
 config.read(cfg)
-
-sql_name = config.get('mysql', 'sql_name')
+sql_host = config.get('mysql', 'sql_host')
 sql_user = config.get('mysql', 'sql_user')
 sql_pass = config.get('mysql', 'sql_pass')
-sql_host = config.get('mysql', 'sql_host')
+sql_name = config.get('mysql', 'sql_name')
 
+# Load slice
+try:
+    Ice.loadSlice('', ['-I' + Ice.getSliceDir(), config.get('ice', 'slice')])
+except RuntimeError as e:
+    print(format(e))
+    sys.exit(0)
+# noinspection PyUnresolvedReferences
+import Murmur
 
-# -------------------------------------------------------------------------------
-
-
+# Test DB connection
 try:
     db_test = MySQLdb.connect(sql_host, sql_user, sql_pass, sql_name)
     db_test.close()
 except Exception as e:
     print("Database initialization failed: {0}".format(e))
     sys.exit(0)
-
-
-# -------------------------------------------------------------------------------
 
 
 # see https://www.mumble.info/documentation/slice/1.3.0/html/Murmur/ServerUpdatingAuthenticator.html
@@ -213,20 +204,20 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
         return -1
 
 
-# -------------------------------------------------------------------------------
-
-
+# Run
 if __name__ == "__main__":
     print('Starting authenticator...')
 
+    ice_host = config.get('ice', 'host')
+    ice_port = config.getint('ice', 'port')
     ice = Ice.initialize(sys.argv)
-    meta = Murmur.MetaPrx.checkedCast(ice.stringToProxy('Meta -e 1.0:tcp -h 127.0.0.1 -p 6502'))
+    meta = Murmur.MetaPrx.checkedCast(ice.stringToProxy('Meta -e 1.0:tcp -h %s -p %d' % (ice_host, ice_port)))
     print('established murmur meta')
-    adapter = ice.createObjectAdapterWithEndpoints("Callback.Client", "tcp -h 127.0.0.1")
+    adapter = ice.createObjectAdapterWithEndpoints('Callback.Client', 'tcp -h %s' % ice_host)
     adapter.activate()
 
-    server = meta.getServer(1)
-    print("Binding to server: {0} {1}".format(server.id, server))
+    server = meta.getServer(config.getint('murmur', 'server'))
+    print("Binding to server: {0}".format(server))
     serverR = Murmur.ServerUpdatingAuthenticatorPrx.uncheckedCast(adapter.addWithUUID(ServerAuthenticatorI()))
     server.setAuthenticator(serverR)
     try:
@@ -235,4 +226,4 @@ if __name__ == "__main__":
         print('Aborting!')
 
     ice.shutdown()
-    print('7o')
+    print('o7')

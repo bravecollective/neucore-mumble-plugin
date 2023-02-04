@@ -1,5 +1,9 @@
 # Changelog
 
+## next
+
+- Breaking: Added new configuration variables to mumble-authenticator.ini.
+
 ## 0.4.0, 2023-01-28
 
 - Breaking: Removed NEUCORE_MUMBLE_PLUGIN_DB_USERNAME and NEUCORE_MUMBLE_PLUGIN_DB_PASSWORD environment variables.
