@@ -22,13 +22,13 @@ available as groups in the ACL configuration.
 Accounts that are members of the "banned" group (configurable ID from the plugin configuration data) cannot connect 
 to Mumble.
 
-It is also possible to ban entire groups or alliances. To do this, manually add an entry to the ban table, e.g.:  
+It is also possible to ban entire corporations or alliances. To do this, manually add an entry to the ban table, e.g.:  
 `INSERT INTO ban (filter, reason_public, reason_internal) VALUES ('alliance-99001861', 'Example', 'Reason');`  
 `INSERT INTO ban (filter, reason_public, reason_internal) VALUES ('corporation-605398057', 'Example', 'Reason');`
 
 ### Names
 
-The Mumble display name is set to the string from the "Nickname" configuration. Where are the following placeholders: 
+The Mumble display name is set to the string from the "Nickname" configuration. There are the following placeholders: 
 {allianceTicker}, {corporationTicker}, {characterName} (required) and {tags}. Characters that come directly before 
 or after a placeholder are removed if there is no value for the placeholder. If there are characters that come 
 directly before or after the {tags} placeholder, they are used around every tag.
@@ -92,6 +92,29 @@ Debian/Ubuntu:
   
   ... other settings that you wish to change
   ```
+
+To reload the server certificate, e.g. after certbot renewed it using `--post-hook` from the cronjob, execute:
+```
+sudo /usr/bin/killall -SIGUSR1 murmurd
+```
+
+To run a second instance the following systemd unit file can be used, for example:
+```
+[Unit]
+Description = Mumble 2
+After = network.target
+After = mysql.service
+
+[Service]
+Type = simple
+User = root
+ExecStart = /usr/sbin/murmurd -ini "/etc/mumble-server2.ini" -fg
+Restart = always
+RestartSec = 5s
+
+[Install]
+WantedBy = multi-user.target
+```
 
 ## Install the authenticator
 
