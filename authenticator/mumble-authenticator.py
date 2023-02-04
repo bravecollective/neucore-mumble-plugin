@@ -71,14 +71,14 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
             c = db.cursor(MySQLdb.cursors.DictCursor)
             c.execute(
                 "SELECT character_id, corporation_id, alliance_id, mumble_password, `groups`, mumble_fullname "
-                "FROM user WHERE mumble_username = %s AND updated_at > %s",
-                (name, ts_min)
+                "FROM user WHERE mumble_username = %s AND updated_at > %s AND account_active = %s",
+                (name, ts_min, 1)
             )
             row = c.fetchone()
             c.close()
 
             if not row:
-                print("Fail: {0} not found in the database or not up to date.".format(name))
+                print("Fail: {0} not found in the database, not up to date or deactivated.".format(name))
                 return return_denied, None, None
 
             character_id = row['character_id']

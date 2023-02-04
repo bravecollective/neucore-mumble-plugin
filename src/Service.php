@@ -30,7 +30,7 @@ class Service implements ServiceInterface
 
     private FactoryInterface $factory;
 
-    private string $configurationDataRaw;
+    private PluginConfiguration $pluginConfiguration;
 
     private ?ConfigurationData $configurationData = null;
 
@@ -42,7 +42,7 @@ class Service implements ServiceInterface
         FactoryInterface $factory,
     ) {
         $this->logger = $logger;
-        $this->configurationDataRaw = $pluginConfiguration->configurationData;
+        $this->pluginConfiguration = $pluginConfiguration;
         $this->factory = $factory;
     }
 
@@ -82,7 +82,7 @@ class Service implements ServiceInterface
 
         $placeholders = implode(',', array_fill(0, count($characterIdsOwnerHashes), '?'));
         $stmt = $this->pdo->prepare(
-            "SELECT character_id, mumble_username, mumble_password, owner_hash
+            "SELECT character_id, mumble_username, mumble_password, owner_hash, account_active
             FROM user
             WHERE character_id IN ($placeholders)"
         );
@@ -103,7 +103,13 @@ class Service implements ServiceInterface
             ) {
                 $password = $this->updateOwner($characterId, $characterIdsOwnerHashes[$characterId]);
             }
-            $result[] = new ServiceAccountData($characterId, $row['mumble_username'], $password);
+            $result[] = new ServiceAccountData(
+                $characterId,
+                $row['mumble_username'],
+                $password,
+                null,
+                $row['account_active'] ? ServiceAccountData::STATUS_ACTIVE : ServiceAccountData::STATUS_DEACTIVATED,
+            );
         }
 
         return $result;
@@ -135,13 +141,14 @@ class Service implements ServiceInterface
         $stmt = $this->pdo->prepare(
             'INSERT INTO user (character_id, character_name, corporation_id, corporation_name, 
                   alliance_id, alliance_name, mumble_username, mumble_password, `groups`, created_at, 
-                  updated_at, owner_hash, mumble_fullname) 
+                  updated_at, owner_hash, mumble_fullname, account_active) 
               VALUES (:character_id, :character_name, :corporation_id, :corporation_name, 
                       :alliance_id, :alliance_name, :mumble_username, :mumble_password, :groups, :created_at, 
-                      :updated_at, :owner_hash, :mumble_fullname)'
+                      :updated_at, :owner_hash, :mumble_fullname, :account_active)'
         );
         $created = time();
         $groupNames = $this->groupNames($groups);
+        $fullName = $this->generateMumbleFullName($character, $groupNames);
         $stmt->bindValue(':character_id', $character->id);
         $stmt->bindValue(':character_name', $character->name);
         $stmt->bindValue(':corporation_id', (int)$character->corporationId);
@@ -154,10 +161,8 @@ class Service implements ServiceInterface
         $stmt->bindValue(':created_at', $created);
         $stmt->bindValue(':updated_at', $created);
         $stmt->bindValue(':owner_hash', (string)$character->ownerHash);
-        $stmt->bindValue(
-            ':mumble_fullname',
-            $this->generateMumbleFullName($character, $groupNames)
-        );
+        $stmt->bindValue(':mumble_fullname', $fullName);
+        $stmt->bindValue(':account_active', 1);
         try {
             $stmt->execute();
         } catch(\Exception $e) {
@@ -165,7 +170,13 @@ class Service implements ServiceInterface
             throw new Exception();
         }
 
-        return new ServiceAccountData($character->id, $mumbleUsername, $mumblePassword);
+        return new ServiceAccountData(
+            $character->id,
+            $mumbleUsername,
+            $mumblePassword,
+            null,
+            ServiceAccountData::STATUS_ACTIVE,
+        );
     }
 
     public function updateAccount(CoreCharacter $character, array $groups, ?CoreCharacter $mainCharacter): void
@@ -480,6 +491,7 @@ class Service implements ServiceInterface
     }
 
     /**
+     * @param CoreGroup[] $groups
      * @throws Exception
      */
     private function updateUser(CoreCharacter $character, array $groups): void
@@ -502,7 +514,8 @@ class Service implements ServiceInterface
                 corporation_id = :corporation_id, corporation_name = :corporation_name,
                 alliance_id = :alliance_id, alliance_name = :alliance_name,
                 $updateUserNameSqlPart $updateFullNameSqlPart
-                updated_at = :updated_at
+                updated_at = :updated_at,
+                account_active = :account_active
             WHERE character_id = :character_id"
         );
         $stmt->bindValue(':character_id', $character->id);
@@ -515,6 +528,7 @@ class Service implements ServiceInterface
         $stmt->bindValue(':alliance_name', $character->allianceName);
         $stmt->bindValue(':groups', $groupNames);
         $stmt->bindValue(':updated_at', time());
+        $stmt->bindValue(':account_active', $this->hasAnyRequiredGroup($groups));
         if (!empty($mumbleUsername)) {
             $stmt->bindValue(':mumble_username', $mumbleUsername);
         }
@@ -553,6 +567,31 @@ class Service implements ServiceInterface
     }
 
     /**
+     * @param CoreGroup[] $groups
+     * @return int 0 or 1
+     */
+    private function hasAnyRequiredGroup(array $groups): int
+    {
+        if (empty($this->pluginConfiguration->requiredGroups)) {
+            return 1;
+        }
+
+        if (empty($groups)) {
+            return 0;
+        }
+
+        $groupIds = array_map(function (CoreGroup $group) {
+            return $group->identifier;
+        }, $groups);
+
+        if (empty(array_intersect($this->pluginConfiguration->requiredGroups, $groupIds))) {
+            return 0;
+        }
+
+        return 1;
+    }
+
+    /**
      * @throws Exception
      */
     private function dbConnect(): void
@@ -585,7 +624,7 @@ class Service implements ServiceInterface
         }
 
         try {
-            $yaml = $this->factory->createSymfonyYamlParser()->parse($this->configurationDataRaw);
+            $yaml = $this->factory->createSymfonyYamlParser()->parse($this->pluginConfiguration->configurationData);
         } catch (ParseException $e) {
             $this->logger->error($e->getMessage());
             throw new Exception('Failed to parse plugin configuration.');

@@ -18,7 +18,8 @@ create table user
     updated_at       int          not null,
     `groups`         text         null,
     owner_hash       varchar(45)  not null,
-    mumble_fullname  varchar(255) not null
+    mumble_fullname  varchar(255) not null,
+    account_active   tinyint default 1 null
 ) engine = InnoDB charset = utf8mb4;
 
 create table ban
