@@ -88,10 +88,7 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
             group_string = row['groups']
             nick = row['mumble_fullname']
 
-            groups = [
-                'corporation-' + str(corporation_id),
-                'alliance-' + str(alliance_id)
-            ]
+            groups = []
             if group_string:
                 for g in group_string.split(','):
                     groups.append(g.strip())

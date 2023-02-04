@@ -4,6 +4,7 @@
 
 - Breaking: Added new configuration variables to mumble-authenticator.ini.
 - Breaking: Changed database schema: `ALTER TABLE user ADD account_active TINYINT DEFAULT 1 NULL;`
+- Breaking: Groups `alliance-{id}` and `corporation-{id}` will no longer be added to Mumble.
 - Fix: Accounts are now disabled if the player does not have any group required by the plugin.
 - Fix: Allow SuperUser login.
 - New: Show full name for admins and in the Neucore player modal window.

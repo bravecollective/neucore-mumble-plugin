@@ -6,7 +6,7 @@ groups for permissions.
 Features:
 - Permissions based on Neucore groups.
 - Configurable nickname based on character data and Neucore groups (tags).
-- Bans based on Neucore groups.
+- Bans based on Neucore groups, corporation or alliance.
 - Support for multiple Mumble servers.
 
 ## How it works
@@ -21,6 +21,10 @@ available as groups in the ACL configuration.
 
 Accounts that are members of the "banned" group (configurable ID from the plugin configuration data) cannot connect 
 to Mumble.
+
+It is also possible to ban entire groups or alliances. To do this, manually add an entry to the ban table, e.g.:  
+`INSERT INTO ban (filter, reason_public, reason_internal) VALUES ('alliance-99001861', 'Example', 'Reason');`  
+`INSERT INTO ban (filter, reason_public, reason_internal) VALUES ('corporation-605398057', 'Example', 'Reason');`
 
 ### Names
 
