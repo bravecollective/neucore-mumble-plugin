@@ -93,12 +93,13 @@ Debian/Ubuntu:
   ... other settings that you wish to change
   ```
 
-To reload the server certificate, e.g. after certbot renewed it using `--post-hook` from the cronjob, execute:
+To reload the server certificate, e.g. after certbot renewed it (using its `--post-hook` argument from the 
+cronjob), execute:
 ```
 sudo /usr/bin/killall -SIGUSR1 murmurd
 ```
 
-To run a second instance the following systemd unit file can be used, for example:
+To run a second Mumble instance the following systemd unit file can be used, for example:
 ```
 [Unit]
 Description = Mumble 2
@@ -115,6 +116,9 @@ RestartSec = 5s
 [Install]
 WantedBy = multi-user.target
 ```
+
+There's also a simple script to manage virtual servers: 
+[authenticator/manage-server.py](authenticator%2Fmanage-server.py).
 
 ## Install the authenticator
 

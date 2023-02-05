@@ -1,5 +1,9 @@
 # Changelog
 
+## next
+
+- Added a simple script to manage virtual servers (authenticator/manage-server.py).
+
 ## 0.5.0, 2023-02-04
 
 - Breaking: Added new configuration variables to mumble-authenticator.ini.
