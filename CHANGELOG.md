@@ -1,6 +1,6 @@
 # Changelog
 
-## next
+## 0.6.0, 2023-02-05
 
 - Breaking: Renamed `server` to `servers` in mumble-authenticator.ini in the murmur section.
 - Added support to handle multiple virtual servers with one authenticator instance.
