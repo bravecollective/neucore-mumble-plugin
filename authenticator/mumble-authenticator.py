@@ -28,6 +28,7 @@ sql_name = config.get('mysql', 'sql_name')
 
 # Load slice
 try:
+    # noinspection PyArgumentList
     Ice.loadSlice('', ['-I' + Ice.getSliceDir(), config.get('ice', 'slice')])
 except RuntimeError as e:
     print(format(e))
@@ -226,13 +227,17 @@ if __name__ == "__main__":
     ice = Ice.initialize(sys.argv)
     meta = Murmur.MetaPrx.checkedCast(ice.stringToProxy('Meta -e 1.0:tcp -h %s -p %d' % (ice_host, ice_port)))
     print('established murmur meta')
+
     adapter = ice.createObjectAdapterWithEndpoints('Callback.Client', 'tcp -h %s' % ice_host)
     adapter.activate()
 
-    server = meta.getServer(config.getint('murmur', 'server'))
-    print("Binding to server: {0}".format(server))
-    serverR = Murmur.ServerUpdatingAuthenticatorPrx.uncheckedCast(adapter.addWithUUID(ServerAuthenticatorI()))
-    server.setAuthenticator(serverR)
+    server_ids = [int(x) for x in config.get('murmur', 'servers').split(',')]
+    for server_id in server_ids:
+        server = meta.getServer(server_id)
+        print("Binding to server: {0}".format(server))
+        serverR = Murmur.ServerUpdatingAuthenticatorPrx.uncheckedCast(adapter.addWithUUID(ServerAuthenticatorI()))
+        server.setAuthenticator(serverR)
+
     try:
         ice.waitForShutdown()
     except KeyboardInterrupt:

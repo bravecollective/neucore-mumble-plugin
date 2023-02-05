@@ -2,6 +2,8 @@
 
 ## next
 
+- Breaking: Renamed `server` to `servers` in mumble-authenticator.ini in the murmur section.
+- Added support to handle multiple virtual servers with one authenticator instance.
 - Added a simple script to manage virtual servers (authenticator/manage-server.py).
 
 ## 0.5.0, 2023-02-04

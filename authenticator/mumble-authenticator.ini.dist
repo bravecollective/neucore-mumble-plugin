@@ -11,7 +11,8 @@ port = 6502
 slice = /usr/share/slice/Murmur.ice
 
 [murmur]
-server = 1
+; Comma separated list of server IDs
+servers = 1
 
 [auth]
 ; If an account has not been updated for more than this number of days, it will not be able to connect.
