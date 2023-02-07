@@ -6,18 +6,16 @@ Simple script to manage virtual servers.
 This needs the same setup as mumble-authenticator.py.
 """
 
+
+import os
 import sys
 import Ice
 
-# Config
 
-ice_slice = '/usr/share/slice/Murmur.ice'
-ice_host = '127.0.0.1'
-ice_port = 6502
-
-
-# Run
-
+# load slice
+ice_slice = os.getcwd() + '/Murmur.ice'
+if len(sys.argv) > 3:
+    ice_slice = sys.argv[3]
 try:
     # noinspection PyArgumentList
     Ice.loadSlice('', ['-I' + Ice.getSliceDir(), ice_slice])
@@ -27,101 +25,152 @@ except RuntimeError as e:
 # noinspection PyUnresolvedReferences
 import Murmur
 
-ice = Ice.initialize(sys.argv)
-meta = Murmur.MetaPrx.checkedCast(ice.stringToProxy('Meta -e 1.0:tcp -h %s -p %s' % (ice_host, ice_port)))
 
+class ManageServer:
+    def __init__(self, host: str, port: str):
+        self.host = host
+        self.port = port
+        self.ice = None
+        self.meta: Murmur.Meta = None
 
-if len(sys.argv) > 1 and sys.argv[1] == 'list':
-    servers = meta.getAllServers()
-    for server in servers:
-        print('id: {0}, running: {1}, port: {2}, registerName: {3}'.format(
-            server.id(),
-            server.isRunning(),
-            server.getConf('port'),
-            server.getConf('registerName'),
-        ))
+    def connect(self) -> Murmur.Meta:
+        self.ice = Ice.initialize(sys.argv)
+        proxy = self.ice.stringToProxy('Meta -e 1.0:tcp -h %s -p %s' % (self.host, self.port))
+        self.meta = Murmur.MetaPrx.checkedCast(proxy)
+        print("Connected to {0}:{1}".format(ice_host, ice_port))
 
-elif len(sys.argv) > 1 and sys.argv[1] == 'conf-all':
-    if len(sys.argv) < 3:
-        print('usage: manage-server.py conf-all 2')
-    else:
-        server = meta.getServer(int(sys.argv[2]))
+    def destroy(self):
+        self.ice.destroy()
+
+    def list(self):
+        for server in self.meta.getAllServers():
+            write('id: {0}, running: {1}, port: {2}, registerName: {3}'.format(
+                server.id(),
+                server.isRunning(),
+                server.getConf('port') if server.getConf('port') else 'n/a',
+                server.getConf('registerName') if server.getConf('registerName') else 'n/a',
+            ))
+
+    def conf_show(self):
+        server_id = input('Server id: ')
+        server = self.meta.getServer(int(server_id))
         if server is None:
-            print('invalid id')
+            write('Invalid id')
+            return
+
+        items = server.getAllConf().items()
+        if len(items) == 0:
+            write('(none)')
         else:
             for key, value in server.getAllConf().items():
-                print('{0}: {1}'.format(key, value))
+                write('{0}: {1}'.format(key, value))
 
-elif len(sys.argv) > 1 and sys.argv[1] == 'create':
-    new_server = meta.newServer()
-    print('new id: {}'.format(new_server.id()))
+    def new(self):
+        new_server = self.meta.newServer()
+        write('New id: {}'.format(new_server.id()))
 
-elif len(sys.argv) > 1 and sys.argv[1] == 'pw':
-    if len(sys.argv) < 4:
-        print('usage: manage-server.py pw 2 super-user-pw')
-    else:
-        server = meta.getServer(int(sys.argv[2]))
+    def pw(self):
+        server_id = input('Server id: ')
+        server = self.meta.getServer(int(server_id))
         if server is None:
-            print('invalid id')
-        else:
-            server.setSuperuserPassword(sys.argv[3])
-            print('done')
+            write('Invalid id')
+            return
 
-elif len(sys.argv) > 1 and sys.argv[1] == 'set-conf':
-    if len(sys.argv) < 5:
-        print('usage: manage-server.py set-conf 2 name value')
-        print('valid names: port, registerName, welcometext, ...')
-    else:
-        server = meta.getServer(int(sys.argv[2]))
+        password = input('Password: ')
+        server.setSuperuserPassword(password)
+        write('Done')
+
+    def conf_set(self):
+        server_id = input('Server id: ')
+        server = self.meta.getServer(int(server_id))
         if server is None:
-            print('invalid id')
-        else:
-            server.setConf(sys.argv[3], sys.argv[4])
-            print('done')
+            write('Invalid id')
+            return
 
-elif len(sys.argv) > 1 and sys.argv[1] == 'start':
-    if len(sys.argv) < 3:
-        print('usage: manage-server.py start 2')
-    else:
-        server = meta.getServer(int(sys.argv[2]))
+        key = input('Key (port, registerName, welcometext, ...): ')
+        value = input('Value: ')
+        server.setConf(key, value)
+        write('Done')
+
+    def start(self):
+        server_id = input('Server id: ')
+        server = self.meta.getServer(int(server_id))
         if server is None:
-            print('invalid id')
-        else:
-            server.start()
-            print('done')
+            write('Invalid id')
+            return
 
-elif len(sys.argv) > 1 and sys.argv[1] == 'stop':
-    if len(sys.argv) < 3:
-        print('usage: manage-server.py stop 2')
-    else:
-        server = meta.getServer(int(sys.argv[2]))
+        server.start()
+        write('Done')
+
+    def stop(self):
+        server_id = input('Server id: ')
+        server = self.meta.getServer(int(server_id))
         if server is None:
-            print('invalid id')
-        else:
-            server.stop()
-            print('done')
+            write('Invalid id')
+            return
 
-elif len(sys.argv) > 1 and sys.argv[1] == 'delete':
-    if len(sys.argv) < 3:
-        print('usage: manage-server.py delete 2')
-    else:
-        server_id = int(sys.argv[2])
-        if server_id == 1:
-            print('No, not deleting server 1.')
-        else:
-            server = meta.getServer(server_id)
-            if server is None:
-                print('invalid id')
-            else:
-                sys.stdout.write('Are you sure? [yes/No] ')
-                if input().lower() == 'yes':
-                    server.delete()
-                    print('deleted server')
-                else:
-                    print('no')
+        server.stop()
+        write('Done')
 
+    def delete(self):
+        server_id = input('Server id: ')
+        if server_id == '1':
+            write('No, not deleting server 1.')
+            return
+
+        server = self.meta.getServer(int(server_id))
+        if server is None:
+            write('Invalid id')
+            return
+
+        sys.stdout.write('Are you sure? [yes/No] ')
+        if input().lower() == 'yes':
+            server.delete()
+            write('Server deleted')
+        else:
+            write('No')
+
+
+def write(text: str):
+    print(text)
+
+
+# Run
+
+if len(sys.argv) > 2:
+    ice_host = sys.argv[1]
+    ice_port = sys.argv[2]
 else:
-    print('usage: manage-server.py list|conf-all|create|pw|set-conf|start|stop|delete')
+    write('Usage: manage-server.py host port [ice file]')
+    sys.exit(0)
 
+manage_server = ManageServer(ice_host, ice_port)
+manage_server.connect()
 
-ice.destroy()
+run = True
+while run:
+    try:
+        command = input('command (list, conf-show, new, pw, conf-set, start, stop, delete, quit): ')
+        if command == 'list':
+            manage_server.list()
+        elif command == 'conf-show':
+            manage_server.conf_show()
+        elif command == 'new':
+            manage_server.new()
+        elif command == 'pw':
+            manage_server.pw()
+        elif command == 'conf-set':
+            manage_server.conf_set()
+        elif command == 'start':
+            manage_server.start()
+        elif command == 'stop':
+            manage_server.stop()
+        elif command == 'delete':
+            manage_server.delete()
+        elif command == 'quit':
+            run = False
+    except KeyboardInterrupt:
+        run = False
+        write('')
+
+manage_server.destroy()

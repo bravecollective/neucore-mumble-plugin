@@ -1,5 +1,9 @@
 # Changelog
 
+## next
+
+- Rewrote server manager
+
 ## 0.6.0, 2023-02-05
 
 - Breaking: Renamed `server` to `servers` in mumble-authenticator.ini in the murmur section.
