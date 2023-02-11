@@ -2,7 +2,10 @@
 
 ## next
 
+## 0.7.0, 2023-02-11
+
 - Rewrote server manager
+- Update to neucore-plugin 1.0.0
 
 ## 0.6.0, 2023-02-05
 
