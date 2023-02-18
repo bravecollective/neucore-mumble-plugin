@@ -33,11 +33,16 @@ class ManageServer:
         self.ice = None
         self.meta: Murmur.Meta = None
 
-    def connect(self) -> Murmur.Meta:
+    def connect(self) -> bool:
         self.ice = Ice.initialize(sys.argv)
-        proxy = self.ice.stringToProxy('Meta -e 1.0:tcp -h %s -p %s' % (self.host, self.port))
+        try:
+            proxy = self.ice.stringToProxy('Meta -e 1.0:tcp -h %s -p %s' % (self.host, self.port))
+        except Exception as ex:
+            write(str(ex))
+            return False
         self.meta = Murmur.MetaPrx.checkedCast(proxy)
-        print("Connected to {0}:{1}".format(ice_host, ice_port))
+        write("Connected to {0}:{1}".format(ice_host, ice_port))
+        return True
 
     def destroy(self):
         self.ice.destroy()
@@ -114,10 +119,6 @@ class ManageServer:
 
     def delete(self):
         server_id = input('Server id: ')
-        if server_id == '1':
-            write('No, not deleting server 1.')
-            return
-
         server = self.meta.getServer(int(server_id))
         if server is None:
             write('Invalid id')
@@ -144,10 +145,17 @@ else:
     write('Usage: manage-server.py host port [ice file]')
     sys.exit(0)
 
-manage_server = ManageServer(ice_host, ice_port)
-manage_server.connect()
+write('')
+write(' Virtual Mumble Server Manager ')
+write('')
+write('  !! Attention, be careful! ')
+write('  !! This script can delete ALL servers, ')
+write('  !! including the default server with ID 1. ')
+write('')
 
-run = True
+manage_server = ManageServer(ice_host, ice_port)
+run = manage_server.connect()
+
 while run:
     try:
         command = input('command (list, conf-show, new, pw, conf-set, start, stop, delete, quit): ')
