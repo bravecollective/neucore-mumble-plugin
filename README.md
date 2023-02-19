@@ -1,7 +1,8 @@
 # Neucore Mumble plugin
 
-This package provides a solution for accessing a Mumble server using [Neucore](https://github.com/tkhamez/neucore) 
-groups for permissions.
+_Needs [Neucore](https://github.com/tkhamez/neucore) version 1.45.0 or higher._
+
+This package provides a solution for accessing a Mumble server using Neucore groups for permissions.
 
 Features:
 - Permissions based on Neucore groups.

@@ -2,13 +2,13 @@
 
 ## 1.0.0, 2023-02-18
 
-- Update to neucore-plugin 2.0.
+- Needs Neucore version 1.45.0 or higher now / Updated to neucore-plugin 2.0.
 - Mumble manager: allow deletion of server with ID 1.
 
 ## 0.7.0, 2023-02-11
 
 - Rewrote server manager.
-- Update to neucore-plugin 1.0.
+- Updated to neucore-plugin 1.0.
 
 ## 0.6.0, 2023-02-05
 
