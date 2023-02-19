@@ -100,6 +100,9 @@ cronjob), execute:
 sudo /usr/bin/killall -SIGUSR1 murmurd
 ```
 
+There's a simple script included to manage virtual servers:
+[authenticator/manage-server.py](authenticator/manage-server.py).
+
 To run a second Mumble instance the following systemd unit file can be used, for example:
 ```
 [Unit]
@@ -117,9 +120,6 @@ RestartSec = 5s
 [Install]
 WantedBy = multi-user.target
 ```
-
-There's also a simple script to manage virtual servers: 
-[authenticator/manage-server.py](authenticator%2Fmanage-server.py).
 
 ## Install the authenticator
 
