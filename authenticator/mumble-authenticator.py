@@ -61,13 +61,14 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
             # ---- Verify Params
 
             if not name or len(name) == 0:
+                print("Fail: did not send a name")
                 return return_denied, None, None
 
             if name == 'SuperUser':
                 print('Fall through for SuperUser')
                 return return_fall_through, None, None
 
-            print("Info: Trying '{0}'".format(name))
+            # print("Info: Trying '{0}'".format(name))
 
             if not pw or len(pw) == 0:
                 print("Fail: {0} did not send a password".format(name))
@@ -105,54 +106,15 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
             # ---- Verify Password
 
             if mumble_password != pw:
-                print(
-                    "Fail: {0} password does not match for {1}: '{2}' != '{3}'"
-                    .format(name, character_id, mumble_password, pw)
-                )
+                print("Fail: {0} password does not match for {1}".format(name, character_id))
                 return return_denied, None, None
 
             # ---- Check Bans
 
-            c = db.cursor(MySQLdb.cursors.DictCursor)
-            c.execute(
-                "SELECT reason_public, reason_internal FROM ban WHERE filter = %s",
-                ('alliance-' + str(alliance_id),)
-            )
-            row1 = c.fetchone()
-            c.close()
-            if row1:
-                print(
-                    "Fail: {0} alliance banned from server: {1} / {2}"
-                    .format(name, row1['reason_public'], row1['reason_internal'])
-                )
-                return return_denied, None, None
-
-            c = db.cursor(MySQLdb.cursors.DictCursor)
-            c.execute(
-                "SELECT reason_public, reason_internal FROM ban WHERE filter = %s",
-                ('corporation-' + str(corporation_id),)
-            )
-            row2 = c.fetchone()
-            c.close()
-            if row2:
-                print(
-                    "Fail: {0} corporation banned from server: {1} / {2}"
-                    .format(name, row2['reason_public'], row2['reason_internal'])
-                )
-                return return_denied, None, None
-
-            c = db.cursor(MySQLdb.cursors.DictCursor)
-            c.execute(
-                "SELECT reason_public, reason_internal FROM ban WHERE filter = %s",
-                ('character-' + str(character_id),)
-            )
-            row3 = c.fetchone()
-            c.close()
-            if row3:
-                print(
-                    "Fail: {0} character banned from server: {1} / {2}"
-                    .format(name, row3['reason_public'], row3['reason_internal'])
-                )
+            if \
+                    check_ban('alliance-' + str(alliance_id), db, name) or \
+                    check_ban('corporation-' + str(corporation_id), db, name) or \
+                    check_ban('character-' + str(character_id), db, name):
                 return return_denied, None, None
 
             # ---- Done
@@ -165,57 +127,71 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
 
     # noinspection PyPep8Naming,PyUnusedLocal
     @staticmethod
-    def getRegistration(userid, current=None):
-        return -2, None, None
-
-    # noinspection PyPep8Naming,PyUnusedLocal
-    @staticmethod
     def getRegisteredUsers(user_filter, current=None):
+        # print("getRegisteredUsers: ".format(user_filter))
         return dict()
 
     # noinspection PyPep8Naming,PyUnusedLocal
     @staticmethod
     def registerUser(info, current=None):
-        print("Warn: Somebody tried to register user '{0}'".format(info))
-        return -1
+        # print("registerUser: {0}".format(info))
+        return -2
 
     # noinspection PyPep8Naming,PyUnusedLocal
     @staticmethod
     def unregisterUser(user_id, current=None):
-        print("Warn: Somebody tried to unregister user '{0}'".format(user_id))
+        # print("unregisterUser: {0}".format(user_id))
         return -1
 
     # noinspection PyPep8Naming,PyUnusedLocal
     @staticmethod
     def idToTexture(user_id, current=None):
-        return None
+        # print("idToTexture: {0}".format(user_id))
+        return ""
 
     # noinspection PyPep8Naming,PyUnusedLocal
     @staticmethod
     def idToName(user_id, current=None):
-        return None
+        # print("idToName: {0}".format(user_id))
+        return ""
 
     # noinspection PyPep8Naming,PyUnusedLocal
     @staticmethod
     def nameToId(name, current=None):
-        return id
+        # print("nameToId: {0}".format(name))
+        return -2
 
     # noinspection PyPep8Naming,PyUnusedLocal
     @staticmethod
     def getInfo(user_id, current=None):
+        # print("getInfo: {0}".format(user_id))
         return False, None
 
     # noinspection PyPep8Naming,PyUnusedLocal
     @staticmethod
     def setInfo(user_id, info, current=None):
-        print("Warn: Somebody tried to set info for '{0}'".format(user_id))
+        # print("setInfo: {0}".format(user_id))
         return -1
 
     # noinspection PyPep8Naming,PyUnusedLocal
     @staticmethod
     def setTexture(userid, tex, current=None):
-        print("Warn: Somebody tried to set a texture for '{0}'".format(userid))
+        # print("setTexture: {0}".format(userid))
         return -1
+
+
+def check_ban(ban_filter: str, db: MySQLdb.Connection, name: str) -> bool:
+    c = db.cursor(MySQLdb.cursors.DictCursor)
+    c.execute("SELECT reason_public, reason_internal FROM ban WHERE filter = %s", (ban_filter,))
+    row = c.fetchone()
+    c.close()
+    if row:
+        print(
+            "Fail: {0} {1} banned from server: {2} / {3}"
+            .format(name, ban_filter, row['reason_public'], row['reason_internal'])
+        )
+        return True
+    return False
 
 
 # Run

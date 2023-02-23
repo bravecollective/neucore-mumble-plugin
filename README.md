@@ -24,8 +24,8 @@ Accounts that are members of the "banned" group (configurable ID from the plugin
 to Mumble.
 
 It is also possible to ban entire corporations or alliances. To do this, manually add an entry to the ban table, e.g.:  
-`INSERT INTO ban (filter, reason_public, reason_internal) VALUES ('alliance-99001861', 'Example', 'Reason');`  
-`INSERT INTO ban (filter, reason_public, reason_internal) VALUES ('corporation-605398057', 'Example', 'Reason');`
+`INSERT INTO ban (filter, reason_public, reason_internal) VALUES ('alliance-99001861', '', '');`  
+`INSERT INTO ban (filter, reason_public, reason_internal) VALUES ('corporation-605398057', '', '');`
 
 ### Names
 
