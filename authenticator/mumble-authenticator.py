@@ -127,9 +127,27 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
 
     # noinspection PyPep8Naming,PyUnusedLocal
     @staticmethod
-    def getRegisteredUsers(user_filter, current=None):
-        # print("getRegisteredUsers: ".format(user_filter))
-        return dict()
+    def getInfo(user_id, current=None):
+        # print("getInfo: {0}".format(user_id))
+        return False, None
+
+    # noinspection PyPep8Naming,PyUnusedLocal
+    @staticmethod
+    def nameToId(name, current=None):
+        # print("nameToId: {0}".format(name))
+        return -2
+
+    # noinspection PyPep8Naming,PyUnusedLocal
+    @staticmethod
+    def idToName(user_id, current=None):
+        # print("idToName: {0}".format(user_id))
+        return ""
+
+    # noinspection PyPep8Naming,PyUnusedLocal
+    @staticmethod
+    def idToTexture(user_id, current=None):
+        # print("idToTexture: {0}".format(user_id))
+        return ""
 
     # noinspection PyPep8Naming,PyUnusedLocal
     @staticmethod
@@ -145,27 +163,9 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
 
     # noinspection PyPep8Naming,PyUnusedLocal
     @staticmethod
-    def idToTexture(user_id, current=None):
-        # print("idToTexture: {0}".format(user_id))
-        return ""
-
-    # noinspection PyPep8Naming,PyUnusedLocal
-    @staticmethod
-    def idToName(user_id, current=None):
-        # print("idToName: {0}".format(user_id))
-        return ""
-
-    # noinspection PyPep8Naming,PyUnusedLocal
-    @staticmethod
-    def nameToId(name, current=None):
-        # print("nameToId: {0}".format(name))
-        return -2
-
-    # noinspection PyPep8Naming,PyUnusedLocal
-    @staticmethod
-    def getInfo(user_id, current=None):
-        # print("getInfo: {0}".format(user_id))
-        return False, None
+    def getRegisteredUsers(user_filter, current=None):
+        # print("getRegisteredUsers: ".format(user_filter))
+        return dict()
 
     # noinspection PyPep8Naming,PyUnusedLocal
     @staticmethod
