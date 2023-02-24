@@ -508,13 +508,23 @@ class Service implements ServiceInterface
         $updateFullNameSqlPart = empty($mumbleFullName) ? '' : 'mumble_fullname = :mumble_fullname,';
         $updateCharNameSqlPart = empty($character->name) ? '' : 'character_name = :character_name,';
 
+        // Avatar
+        $updateAvatarSqlPart = 'avatar = :avatar,';
+        $avatar = '';
+        if ($this->configurationData->showAvatar) {
+            $avatar = $this->getAvatar($character->id);
+            if (empty($avatar)) { // Don't update if HTTP request for image failed.
+                $updateAvatarSqlPart = '';
+            }
+        }
+
         // Update user
         $stmt = $this->pdo->prepare(
             "UPDATE user
             SET `groups` = :groups, $updateCharNameSqlPart
                 corporation_id = :corporation_id, corporation_name = :corporation_name,
                 alliance_id = :alliance_id, alliance_name = :alliance_name,
-                $updateUserNameSqlPart $updateFullNameSqlPart
+                $updateUserNameSqlPart $updateFullNameSqlPart $updateAvatarSqlPart
                 updated_at = :updated_at,
                 account_active = :account_active
             WHERE character_id = :character_id"
@@ -536,12 +546,22 @@ class Service implements ServiceInterface
         if (!empty($mumbleFullName)) {
             $stmt->bindValue(':mumble_fullname', $mumbleFullName);
         }
+        if (!empty($updateAvatarSqlPart)) {
+            $stmt->bindValue(':avatar', $avatar);
+        }
         try {
             $stmt->execute();
         } catch(\Exception $e) {
             $this->logger->error($e->getMessage(), ['exception' => $e]);
             throw new Exception();
         }
+    }
+
+    private function getAvatar(int $characterId): string
+    {
+        $url = "https://images.evetech.net/characters/$characterId/portrait?size=128&tenant=tranquility";
+        $avatar = file_get_contents($url);
+        return $avatar ?: '';
     }
 
     /**
@@ -645,6 +665,7 @@ class Service implements ServiceInterface
             $yaml['Nickname'],
             $yaml['GroupsToTags'],
             (bool)$yaml['MainTagReplacesCorporationTicker'],
+            (bool)($yaml['ShowAvatar'] ?? false),
             $yaml['AdditionalTagGroups'] ?? [],
             isset($yaml['BannedGroup']) ? (int)$yaml['BannedGroup'] : null,
         );

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.0, 2023-02-24
+
+- Breaking: Changed database schema: `ALTER TABLE user ADD avatar BLOB NULL;`.
+- Added option in configuration data to show avatar: `ShowAvatar`, default `false`.
+- Change log messages a little bit.
+- 
 ## 1.0.0, 2023-02-18
 
 - Needs Neucore version 1.45.0 or higher now / Updated to neucore-plugin 2.0.

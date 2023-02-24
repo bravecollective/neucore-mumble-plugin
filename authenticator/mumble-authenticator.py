@@ -47,11 +47,13 @@ except Exception as e:
 
 # see https://www.mumble.info/documentation/slice/1.3.0/html/Murmur/ServerUpdatingAuthenticator.html
 class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
+    avatars = {}
+
+    def __init__(self):
+        Murmur.ServerUpdatingAuthenticator.__init__(self)
 
     # noinspection PyUnusedLocal
-    @staticmethod
-    def authenticate(name, pw, certificates, cert_hash, cer_strong, out_newname):
-        db = None
+    def authenticate(self, name, pw, certificates, cert_hash, cer_strong, out_newname):
         try:
             db = MySQLdb.connect(sql_host, sql_user, sql_pass, sql_name)
 
@@ -68,8 +70,6 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
                 print('Fall through for SuperUser')
                 return return_fall_through, None, None
 
-            # print("Info: Trying '{0}'".format(name))
-
             if not pw or len(pw) == 0:
                 print("Fail: {0} did not send a password".format(name))
                 return return_denied, None, None
@@ -80,7 +80,7 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
             ts_min = int(time.time()) - (60 * 60 * 24 * days_limit)
             c = db.cursor(MySQLdb.cursors.DictCursor)
             c.execute(
-                "SELECT character_id, corporation_id, alliance_id, mumble_password, `groups`, mumble_fullname "
+                "SELECT character_id, corporation_id, alliance_id, mumble_password, `groups`, mumble_fullname, avatar "
                 "FROM user WHERE mumble_username = %s AND updated_at > %s AND account_active = %s",
                 (name, ts_min, 1)
             )
@@ -97,6 +97,7 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
             mumble_password = row['mumble_password']
             group_string = row['groups']
             nick = row['mumble_fullname']
+            self.avatars[character_id] = row['avatar']
 
             groups = []
             if group_string:
@@ -119,7 +120,8 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
 
             # ---- Done
 
-            print("Success: '{0}' as '{1}' in {2}".format(character_id, nick, groups))
+            # print("Success: '{0}' as '{1}' in {2}".format(character_id, nick, groups))
+            print("Success: '{0}' as '{1}'".format(character_id, nick))
             return character_id, nick, groups
 
         except Exception as e2:
@@ -144,9 +146,14 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
         return ""
 
     # noinspection PyPep8Naming,PyUnusedLocal
-    @staticmethod
-    def idToTexture(user_id, current=None):
+    def idToTexture(self, user_id, current=None):
         # print("idToTexture: {0}".format(user_id))
+
+        if user_id in self.avatars:
+            avatar = self.avatars[user_id]
+            self.avatars[user_id] = ''
+            return avatar
+
         return ""
 
     # noinspection PyPep8Naming,PyUnusedLocal

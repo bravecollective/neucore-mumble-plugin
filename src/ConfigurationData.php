@@ -15,6 +15,8 @@ class ConfigurationData
 
         public bool $mainTagReplacesCorporationTicker,
 
+        public bool $showAvatar,
+
         /**
          * @var array<array<string>>
          */
