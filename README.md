@@ -7,6 +7,7 @@ This package provides a solution for accessing a Mumble server using Neucore gro
 Features:
 - Permissions based on Neucore groups.
 - Configurable nickname based on character data and Neucore groups (tags).
+- Avatars
 - Bans based on Neucore groups, corporation or alliance.
 - Support for multiple Mumble servers.
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## next
+
+- Avatar images are now cached forever.
+
 ## 2.0.0, 2023-02-24
 
 - Breaking: Changed database schema: `ALTER TABLE user ADD avatar BLOB NULL;`.

@@ -97,7 +97,7 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
             mumble_password = row['mumble_password']
             group_string = row['groups']
             nick = row['mumble_fullname']
-            self.avatars[character_id] = row['avatar']
+            self.avatars[character_id] = row['avatar'] or ''
 
             groups = []
             if group_string:
@@ -143,18 +143,14 @@ class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
     @staticmethod
     def idToName(user_id, current=None):
         # print("idToName: {0}".format(user_id))
-        return ""
+        return ''
 
     # noinspection PyPep8Naming,PyUnusedLocal
     def idToTexture(self, user_id, current=None):
-        # print("idToTexture: {0}".format(user_id))
-
+        print("idToTexture: {0}".format(user_id))
         if user_id in self.avatars:
-            avatar = self.avatars[user_id]
-            self.avatars[user_id] = ''
-            return avatar
-
-        return ""
+            return self.avatars[user_id]
+        return ''
 
     # noinspection PyPep8Naming,PyUnusedLocal
     @staticmethod
