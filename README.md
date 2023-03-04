@@ -18,8 +18,8 @@ authenticator.
 
 ### Permissions
 
-All groups of anyone who creates a Mumble account in Neucore are added to the Mumble server. They are then 
-available as groups in the ACL configuration.
+All Neucore groups of anyone who connects to Mumble are added to the server. They are then available as groups 
+in the ACL configuration.
 
 Accounts that are members of the "banned" group (configurable ID from the plugin configuration data) cannot connect 
 to Mumble.
@@ -62,11 +62,11 @@ instructions.
 The plugin needs the following environment variable:
 - `NEUCORE_MUMBLE_PLUGIN_DB_DSN=mysql:host=127.0.0.1;dbname=neucore_mumble;user=mumble;password=pass`  
   The name of the environment variable can be changed with "DatabaseEnvVar" from the configuration
-  data of the plugin.
+  data of the plugin. This makes it possible to add several Mumble services for different Mumble servers.
 
 Optional environment variables:
 - `NEUCORE_MUMBLE_PLUGIN_DB_SSL_CA="/path/to/ca-cert.pem"`  
-  Setting this will enable encryption for the database connection.
+  Setting this will enable encryption for the database connection, even if it is set to an empty value.
 - `NEUCORE_MUMBLE_PLUGIN_DB_SSL_VERIFY=1`
 
 Create a new service on Neucore for this plugin and adjust the "Configuration Data" text area and other
