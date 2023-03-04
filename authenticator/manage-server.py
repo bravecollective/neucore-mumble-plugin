@@ -48,15 +48,21 @@ class ManageServer:
         self.ice.destroy()
 
     def list(self):
+        default_port = int(self.meta.getDefaultConf().get('port'))
+        default_register_name = self.meta.getDefaultConf().get('registerName')
         for server in self.meta.getAllServers():
             write('id: {0}, running: {1}, port: {2}, registerName: {3}'.format(
                 server.id(),
                 server.isRunning(),
-                server.getConf('port') if server.getConf('port') else 'n/a',
-                server.getConf('registerName') if server.getConf('registerName') else 'n/a',
+                server.getConf('port') if server.getConf('port') else default_port + server.id() - 1,
+                server.getConf('registerName') if server.getConf('registerName') else default_register_name,
             ))
 
-    def conf_show(self):
+    def default_conf(self):
+        items = self.meta.getDefaultConf().items()
+        self.__print_items(items)
+
+    def conf(self):
         server_id = input('Server id: ')
         server = self.meta.getServer(int(server_id))
         if server is None:
@@ -64,11 +70,7 @@ class ManageServer:
             return
 
         items = server.getAllConf().items()
-        if len(items) == 0:
-            write('(none)')
-        else:
-            for key, value in server.getAllConf().items():
-                write('{0}: {1}'.format(key, value))
+        self.__print_items(items)
 
     def new(self):
         new_server = self.meta.newServer()
@@ -131,6 +133,14 @@ class ManageServer:
         else:
             write('No')
 
+    @staticmethod
+    def __print_items(items):
+        if len(items) == 0:
+            write('(none)')
+        else:
+            for key, value in items:
+                write('{0}: {1}'.format(key, value))
+
 
 def write(text: str):
     print(text)
@@ -158,11 +168,14 @@ run = manage_server.connect()
 
 while run:
     try:
-        command = input('command (list, conf-show, new, pw, conf-set, start, stop, delete, quit): ')
+        write('')
+        command = input('command (list, conf, default-conf, new, pw, conf-set, start, stop, delete, quit): ')
         if command == 'list':
             manage_server.list()
-        elif command == 'conf-show':
-            manage_server.conf_show()
+        elif command == 'conf':
+            manage_server.conf()
+        elif command == 'default-conf':
+            manage_server.default_conf()
         elif command == 'new':
             manage_server.new()
         elif command == 'pw':
@@ -177,6 +190,8 @@ while run:
             manage_server.delete()
         elif command == 'quit':
             run = False
+        else:
+            write('Invalid command.')
     except KeyboardInterrupt:
         run = False
         write('')

@@ -3,6 +3,8 @@
 ## next
 
 - Avatar images are now cached forever.
+- Manager: Add method to show default config.
+- Manager, list servers: Show default port and register name if they are not set.
 
 ## 2.0.0, 2023-02-24
 
