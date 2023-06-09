@@ -53,8 +53,8 @@ The main tag can optionally be used instead of the corporation ticker at its pos
 
 ## Install the plugin
 
-See [Neucore Plugins.md](https://github.com/tkhamez/neucore/blob/main/doc/Plugins.md) for general installation 
-instructions.
+See [Neucore Plugins.md](https://github.com/tkhamez/neucore/blob/main/doc/Plugins.md#install-a-plugin) for 
+general installation instructions.
 
 - Create a new database (e.g. neucore_mumble)
 - Create the database tables by importing create.sql.
