@@ -38,8 +38,8 @@ directly before or after the {tags} placeholder, they are used around every tag.
 The tags are added according to the "GroupsToTags" configuration of the service plugin. Only the first tag from 
 each group is used. Every tag not included in the optional "AdditionalTagGroups" configuration is part of the main 
 tag group, they are added as the last tag. The optional "AdditionalTagGroups" configuration defines 
-additional groups, they are added in the order they are defined there before the main tag. See plugin.yml for 
-an example.
+additional groups, they are added in the order they are defined there before the main tag. The "Configuration Data"
+contains an example when you add a new plugin.
 
 The main tag can optionally be used instead of the corporation ticker at its position, configured by the 
 "MainTagReplacesCorporationTicker" configuration value.
