@@ -72,6 +72,9 @@ Optional environment variables:
 Create a new service on Neucore for this plugin and adjust the "Configuration Data" text area and other
 configuration values that you want to change.
 
+This plugin uses the Neucore command "update-service-accounts" to update Mumble permissions etc., so make sure that
+the [Neucore cronjob](https://github.com/tkhamez/neucore/blob/main/doc/Install.md#cronjob) is running.
+
 ## Install Mumble
 
 Debian/Ubuntu:

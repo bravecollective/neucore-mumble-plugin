@@ -61,7 +61,6 @@ configurationData: |
   AdditionalTagGroups: # Optional
     -
       - He/Him
-      - She/He
       - She/Her
       - They/Them
     -
