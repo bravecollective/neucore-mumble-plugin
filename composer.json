@@ -4,14 +4,14 @@
     "type": "project",
     "license": "MIT",
     "require": {
-        "php": "^8.0",
+        "php": "^8.0.2",
         "ext-mbstring": "*",
         "ext-pdo": "*",
-        "tkhamez/neucore-plugin": "^2.0"
+        "tkhamez/neucore-plugin": "^3.0"
     },
     "config": {
         "platform": {
-            "php": "8.0.0"
+            "php": "8.0.2"
         }
     }
 }
