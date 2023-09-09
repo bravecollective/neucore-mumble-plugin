@@ -6,7 +6,7 @@ This version needs Neucore version 2.2.0 or higher.
 
 - Raised minimum required PHP version to 8.0.2, from 8.0.0.
 - Updated to Neucore plugin version 3.
-- Avatar images are now cached forever.
+- Avatar images are now cached forever (while the authenticator is running).
 - Manager: Added method to show default config.
 - Manager, list servers: Now shows default port and register name if they are not explicitly set.
 
