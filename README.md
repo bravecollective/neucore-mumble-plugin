@@ -107,24 +107,6 @@ sudo /usr/bin/killall -SIGUSR1 murmurd
 There's a simple script included to manage virtual servers:
 [authenticator/manage-server.py](authenticator/manage-server.py).
 
-To run a second Mumble instance the following systemd unit file can be used, for example:
-```
-[Unit]
-Description = Mumble 2
-After = network.target
-After = mysql.service
-
-[Service]
-Type = simple
-User = root
-ExecStart = /usr/sbin/murmurd -ini "/etc/mumble-server2.ini" -fg
-Restart = always
-RestartSec = 5s
-
-[Install]
-WantedBy = multi-user.target
-```
-
 ## Install the authenticator
 
 Example for Ubuntu 20.04 (Python 3.8):
@@ -145,3 +127,10 @@ Example for Ubuntu 20.04 (Python 3.8):
   - `sudo systemctl daemon-reload`
   - `sudo systemctl enable mumble-authenticator@1`
   - `sudo systemctl start mumble-authenticator@1`
+
+## Copyright notice
+
+This plugin is licensed under the [MIT license](LICENSE).
+
+"EVE", "EVE Online", "CCP" and all related logos and images are trademarks or registered 
+trademarks of [CCP hf](http://www.ccpgames.com/).
