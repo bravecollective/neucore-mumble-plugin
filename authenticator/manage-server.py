@@ -34,7 +34,7 @@ class ManageServer:
         self.meta: Murmur.Meta = None
 
     def connect(self) -> bool:
-        self.ice = Ice.initialize(sys.argv)
+        self.ice = Ice.initialize()
         try:
             proxy = self.ice.stringToProxy('Meta -e 1.0:tcp -h %s -p %s' % (self.host, self.port))
         except Exception as ex:

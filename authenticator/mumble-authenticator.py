@@ -203,7 +203,7 @@ if __name__ == "__main__":
 
     ice_host = config.get('ice', 'host')
     ice_port = config.getint('ice', 'port')
-    ice = Ice.initialize(sys.argv)
+    ice = Ice.initialize()
     meta = Murmur.MetaPrx.checkedCast(ice.stringToProxy('Meta -e 1.0:tcp -h %s -p %d' % (ice_host, ice_port)))
     print('established murmur meta')
 
