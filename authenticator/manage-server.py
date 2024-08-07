@@ -3,7 +3,9 @@
 """
 Simple script to manage virtual servers.
 
-This needs the same setup as mumble-authenticator.py.
+This needs the same setup as mumble-authenticator.py, see README.md.
+
+Run, e.g.: python manage-server.py 127.0.0.1 6502
 """
 
 

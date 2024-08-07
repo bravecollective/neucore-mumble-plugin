@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.1.0, 2024-08-07
+
+The authenticator of this version was tested and runs with Python 3.8 on Ubuntu 20.04, and
+Python 3.8 and 3.12 on Ubuntu 22.04.
+
+There were no actual code changes with this release, just documentation changes. 
+
 ## 3.0.0, 2023-08-04
 
 This version needs Neucore version 2.2.0 or higher.
