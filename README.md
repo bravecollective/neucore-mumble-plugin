@@ -77,7 +77,7 @@ the [Neucore cronjob](https://github.com/tkhamez/neucore/blob/main/doc/Install.m
 
 ## Install Mumble
 
-Example for Ubuntu 22.04:
+Example for Ubuntu 22.04 with MySQL:
 
 - `sudo apt install mumble-server libqt5sql5-mysql`
 - `sudo dpkg-reconfigure mumble-server` to set the SuperUser password.
@@ -122,6 +122,8 @@ Example for Ubuntu 22.04 with Python 3.12.
   - `sudo systemctl daemon-reload`
   - `sudo systemctl enable mumble-authenticator@1`
   - `sudo systemctl start mumble-authenticator@1`
+
+Please note that the authenticator must be restarted after Mumble has been restarted.
 
 If you run multiple virtual servers, you can either use the same authenticator service for them by
 adding the other server IDs to `servers` in the configuration file or a separate service. For a
