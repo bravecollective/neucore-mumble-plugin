@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.0.0, 2024-11-23
+
+- Raised minumum required PHP version to 8.1.
+- Update tkhamez/neucore-plugin.
+
 ## 3.1.0, 2024-08-07
 
 The authenticator of this version was tested and runs with Python 3.8 on Ubuntu 20.04, and
