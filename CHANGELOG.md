@@ -1,5 +1,9 @@
 # Changelog
 
+## next
+
+- Compatibility with PHP 8.5
+
 ## 4.0.0, 2024-11-23
 
 - Raised minumum required PHP version to 8.1.

@@ -19,7 +19,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Yaml\Exception\ParseException;
 
-/** @noinspection PhpUnused */
 class Service implements ServiceInterface
 {
     private const PLACEHOLDER_CHAR_NAME = '{characterName}';
@@ -184,7 +183,7 @@ class Service implements ServiceInterface
     {
         $this->dbConnect();
 
-        // Remove account if character does not exist on Neucore.
+        // Remove account if the character does not exist on Neucore.
         if ($character->playerId === 0) {
             $this->deleteAccount($character->id);
             return;
@@ -565,7 +564,7 @@ class Service implements ServiceInterface
     }
 
     /**
-     * Add/remove character from ban table
+     * Add/remove character from the ban table
      *
      * @throws Exception
      */
