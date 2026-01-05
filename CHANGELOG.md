@@ -1,13 +1,14 @@
 # Changelog
 
-## next
+## 4.1.0, 2026-01-05
 
 - Compatibility with PHP 8.5
+- Updated tkhamez/neucore-plugin.
 
 ## 4.0.0, 2024-11-23
 
-- Raised minumum required PHP version to 8.1.
-- Update tkhamez/neucore-plugin.
+- Raised minimum required PHP version to 8.1.
+- Updated tkhamez/neucore-plugin.
 
 ## 3.1.0, 2024-08-07
 
