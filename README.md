@@ -101,7 +101,7 @@ authenticator (see below). You can run it with, e.g. `python manage-server.py 12
 
 ## Install the authenticator
 
-The authenticator has been tested with Python 12 and 13 on Ubuntu 24.04 with Mumble server 1.5.
+The authenticator has been tested with Python 3.12 and 3.13 on Ubuntu 24.04 with Mumble server 1.5.
 
 Example for Ubuntu 24.04 with Python 3.13:
 
