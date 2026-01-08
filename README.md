@@ -48,8 +48,8 @@ The main tag can optionally be used instead of the corporation ticker at its pos
 
 - A [Neucore](https://github.com/tkhamez/neucore) installation.
 - Its own MySQL/MariaDB database.
-- Python 3.12
-- Mumble Server
+- Python 3.12 or 3.13 (other versions may work but were not tested)
+- Mumble server 1.5 (other versions were not tested, but it should no longer work with 1.3)
 
 ## Install the plugin
 
@@ -77,11 +77,11 @@ the [Neucore cronjob](https://github.com/tkhamez/neucore/blob/main/doc/Install.m
 
 ## Install Mumble
 
-Example for Ubuntu 22.04 with MySQL:
+Example for Ubuntu 24.04 with MySQL:
 
 - `sudo apt install mumble-server libqt5sql5-mysql`
 - `sudo dpkg-reconfigure mumble-server` to set the SuperUser password.
-- Edit `/etc/mumble-server.ini` and adjust at least:
+- Edit `/etc/mumble/mumble-server.ini` and adjust at least:
   ```
   database=mumble
   
@@ -101,15 +101,17 @@ authenticator (see below). You can run it with, e.g. `python manage-server.py 12
 
 ## Install the authenticator
 
-Example for Ubuntu 22.04 with Python 3.12.
+The authenticator has been tested with Python 12 and 13 on Ubuntu 24.04 with Mumble server 1.5.
+
+Example for Ubuntu 24.04 with Python 3.13:
 
 - Setup:
   - `sudo apt install python3-venv python3-dev build-essential default-libmysqlclient-dev libbz2-dev pkg-config`
   - `sudo add-apt-repository ppa:deadsnakes/ppa`
-  - `sudo apt install python3.12 python3.12-venv python3.12-dev`
+  - `sudo apt install python3.13 python3.13-venv python3.13-dev`
   - Clone repository to `/opt/neucore-mumble-plugin`
   - `cd /opt/neucore-mumble-plugin/authenticator/`
-  - `python3.12 -m venv .venv`
+  - `python3.13 -m venv .venv`
   - `source .venv/bin/activate`
   - `pip install wheel`
   - `pip install mysqlclient zeroc-ice`
@@ -126,7 +128,7 @@ Example for Ubuntu 22.04 with Python 3.12.
 Please note that the authenticator must be restarted after Mumble has been restarted.
 
 If you run multiple virtual servers, you can either use the same authenticator service for them by
-adding the other server IDs to `servers` in the configuration file or a separate service. For a
+adding the other server IDs to `servers` in the configuration file or add a separate service. For a
 separate service, create the file `mumble-authenticator-2.ini`, adjust at least `sql_name` and `servers`
 and enable and start the service `mumble-authenticator@2`.
 

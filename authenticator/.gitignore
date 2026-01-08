@@ -1,3 +1,5 @@
 /.idea
 /.venv
-/mumble-authenticator*.ini
+/.venv12
+/.venv13
+/mumble-authenticator-*.ini

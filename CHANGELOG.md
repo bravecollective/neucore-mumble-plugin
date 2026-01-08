@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.0.0, 2026-01-08
+
+- BC break: The authenticator does no longer work with Mumble 1.3 (Mumur.ice).
+- New: Updated the authenticator for Mumble server version 1.5 (MumbleServer.ice).
+
+The authenticator from this release has been tested with Python 3.12 and 3.13 on Ubuntu 24.04.
+
 ## 4.1.0, 2026-01-05
 
 - Compatibility with PHP 8.5
@@ -7,7 +14,7 @@
 
 ## 4.0.0, 2024-11-23
 
-- Raised minimum required PHP version to 8.1.
+- Raised the minimum required PHP version to 8.1.
 - Updated tkhamez/neucore-plugin.
 
 ## 3.1.0, 2024-08-07
@@ -21,7 +28,7 @@ There were no actual code changes with this release, just documentation changes.
 
 This version needs Neucore version 2.2.0 or higher.
 
-- Raised minimum required PHP version to 8.0.2, from 8.0.0.
+- Raised the minimum required PHP version to 8.0.2, from 8.0.0.
 - Updated to Neucore plugin version 3.
 - Avatar images are now cached forever (while the authenticator is running).
 - Manager: Added method to show default config.
@@ -54,16 +61,16 @@ This version needs Neucore version 2.2.0 or higher.
 - Breaking: Added new configuration variables to mumble-authenticator.ini.
 - Breaking: Changed database schema: `ALTER TABLE user ADD account_active TINYINT DEFAULT 1 NULL;`
 - Breaking: Groups `alliance-{id}` and `corporation-{id}` will no longer be added to Mumble.
-- Added optional argument to mumble-authenticator.py to choose a different mumble-authenticator.ini file.
+- Added an optional argument to mumble-authenticator.py to choose a different mumble-authenticator.ini file.
 - Change: The example systemd service unit file now uses a parameter that is passed to mumble-authenticator.py.
-- New: Show full name for Neucore admins and in the player modal window.
+- New: Show the full name for Neucore admins and in the player modal window.
 - Fix: Accounts are now disabled if the player does not have any group required by the plugin.
 - Fix: Allow SuperUser login.
 
 ## 0.4.0, 2023-01-28
 
 - Breaking: Removed NEUCORE_MUMBLE_PLUGIN_DB_USERNAME and NEUCORE_MUMBLE_PLUGIN_DB_PASSWORD environment variables.
-  Add user and password to NEUCORE_MUMBLE_PLUGIN_DB_DSN.
+  Add the user and password to NEUCORE_MUMBLE_PLUGIN_DB_DSN.
 - Support for multiple Mumble servers (one per service plugin).
 
 ## 0.3.0, 2023-01-28

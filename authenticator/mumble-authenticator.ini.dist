@@ -8,9 +8,10 @@ sql_name = mumble-sso
 [ice]
 host = 127.0.0.1
 port = 6502
-slice = /usr/share/slice/Murmur.ice
+; This file is a copy from Ubuntu 24.04 of /etc/mumble/MumbleServer.ice
+slice = /opt/neucore-mumble-plugin/authenticator/MumbleServer.ice
 
-[murmur]
+[MumbleServer]
 ; Comma separated list of server IDs
 servers = 1
 

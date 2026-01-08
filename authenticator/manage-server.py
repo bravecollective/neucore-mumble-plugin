@@ -15,17 +15,16 @@ import Ice
 
 
 # load slice
-ice_slice = os.getcwd() + '/Murmur.ice'
+ice_slice = os.getcwd() + '/MumbleServer.ice'
 if len(sys.argv) > 3:
     ice_slice = sys.argv[3]
 try:
-    # noinspection PyArgumentList
-    Ice.loadSlice('', ['-I' + Ice.getSliceDir(), ice_slice])
+    Ice.loadSlice(['-I' + Ice.getSliceDir(), ice_slice])
 except RuntimeError as e:
     print(format(e))
     sys.exit(0)
 # noinspection PyUnresolvedReferences
-import Murmur
+import MumbleServer
 
 
 class ManageServer:
@@ -33,7 +32,7 @@ class ManageServer:
         self.host = host
         self.port = port
         self.ice = None
-        self.meta: Murmur.Meta = None
+        self.meta: MumbleServer.Meta = None
 
     def connect(self) -> bool:
         self.ice = Ice.initialize()
@@ -42,7 +41,7 @@ class ManageServer:
         except Exception as ex:
             write(str(ex))
             return False
-        self.meta = Murmur.MetaPrx.checkedCast(proxy)
+        self.meta = MumbleServer.MetaPrx.checkedCast(proxy)
         write("Connected to {0}:{1}".format(ice_host, ice_port))
         return True
 

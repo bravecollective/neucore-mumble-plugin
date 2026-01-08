@@ -28,13 +28,12 @@ sql_name = config.get('mysql', 'sql_name')
 
 # Load slice
 try:
-    # noinspection PyArgumentList
-    Ice.loadSlice('', ['-I' + Ice.getSliceDir(), config.get('ice', 'slice')])
+    Ice.loadSlice(['-I' + Ice.getSliceDir(), config.get('ice', 'slice')])
 except RuntimeError as e:
     print(format(e))
     sys.exit(0)
 # noinspection PyUnresolvedReferences
-import Murmur
+import MumbleServer
 
 # Test DB connection
 try:
@@ -46,11 +45,11 @@ except Exception as e:
 
 
 # see https://www.mumble.info/documentation/slice/1.3.0/html/Murmur/ServerUpdatingAuthenticator.html
-class ServerAuthenticatorI(Murmur.ServerUpdatingAuthenticator):
+class ServerAuthenticatorI(MumbleServer.ServerUpdatingAuthenticator):
     avatars = {}
 
     def __init__(self):
-        Murmur.ServerUpdatingAuthenticator.__init__(self)
+        MumbleServer.ServerUpdatingAuthenticator.__init__(self)
 
     # noinspection PyUnusedLocal
     def authenticate(self, name, pw, certificates, cert_hash, cer_strong, out_newname):
@@ -204,17 +203,17 @@ if __name__ == "__main__":
     ice_host = config.get('ice', 'host')
     ice_port = config.getint('ice', 'port')
     ice = Ice.initialize()
-    meta = Murmur.MetaPrx.checkedCast(ice.stringToProxy('Meta -e 1.0:tcp -h %s -p %d' % (ice_host, ice_port)))
-    print('established murmur meta')
+    meta = MumbleServer.MetaPrx.checkedCast(ice.stringToProxy('Meta -e 1.0:tcp -h %s -p %d' % (ice_host, ice_port)))
+    print('established MumbleServer meta')
 
     adapter = ice.createObjectAdapterWithEndpoints('Callback.Client', 'tcp -h %s' % ice_host)
     adapter.activate()
 
-    server_ids = [int(x) for x in config.get('murmur', 'servers').split(',')]
+    server_ids = [int(x) for x in config.get('MumbleServer', 'servers').split(',')]
     for server_id in server_ids:
         server = meta.getServer(server_id)
         print("Binding to server: {0}".format(server))
-        serverR = Murmur.ServerUpdatingAuthenticatorPrx.uncheckedCast(adapter.addWithUUID(ServerAuthenticatorI()))
+        serverR = MumbleServer.ServerUpdatingAuthenticatorPrx.uncheckedCast(adapter.addWithUUID(ServerAuthenticatorI()))
         server.setAuthenticator(serverR)
 
     try:
